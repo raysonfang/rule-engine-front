@@ -1,0 +1,179 @@
+<template>
+  <div id="app">
+    <el-form ref="form" :inline="true" :model="search.form" label-width="70px">
+      <el-form-item label="规则名称" prop="name">
+        <el-input v-model="search.form.name"></el-input>
+      </el-form-item>
+
+      <el-form-item label="规则状态" prop="status">
+        <el-select v-model="search.form.status"
+                   placeholder="请选择数据 ">
+          <el-option label="全部" :value="null"></el-option>
+          <el-option label="编辑中" value="0"></el-option>
+          <el-option label="待发布" value="1"></el-option>
+          <el-option label="已发布" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
+        <el-button type="reset" @click="reset('search.form')">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-button type="primary" @click="createRule()">新建规则</el-button>
+
+
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      style="width: 100%"
+      :default-sort="{prop: 'id', order: 'descending'}">
+      <el-table-column
+        prop="id"
+        label="编号"
+        sortable
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="规则名称">
+      </el-table-column>
+
+      <el-table-column
+        prop="code"
+        label="Code"
+        width="200">
+      </el-table-column>
+
+      <el-table-column
+        prop="createUserName"
+        label="创建人"
+        width="180">
+      </el-table-column>
+
+      <el-table-column
+        prop="status"
+        label="规则状态"
+        width="140">
+      </el-table-column>
+
+      <el-table-column
+        prop="createTime"
+        sortable
+        width="180"
+        label="创建日期">
+      </el-table-column>
+
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="140">
+        <template slot-scope="scope">
+          <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+          <el-button @click="deleteRow(scope.row)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <br>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="page.pageIndex"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="page.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="page.total">
+    </el-pagination>
+  </div>
+</template>
+
+<script>
+
+  export default {
+    name: "Rule",
+    data() {
+      return {
+        tableData: [],
+        loading: false,
+        page: {
+          pageIndex: 1,
+          pageSize: 10,
+          total: 0
+        },
+        search: {
+          form: {
+            name: null,//根据规则名称搜索
+            status: null//规则状态搜索 编辑中，已发布，待发布规则
+          }
+        },
+      }
+    }, methods: {
+      reset(formName) {
+        this.$refs[formName].resetFields();
+        this.list();
+      }, handleSizeChange(val) {
+        this.page.pageSize = val;
+        this.list();
+      },
+      handleCurrentChange(val) {
+        this.page.currentPage = val;
+        this.list();
+      },
+      edit(row) {
+        this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
+      },
+      deleteRow(row) {
+        this.$axios.post("/ruleEngine/rule/delete", {
+          "id": row.id
+        }).then(res => {
+          let da = res.data;
+          if (da) {
+            this.$message({
+              showClose: true,
+              message: '删除成功',
+              type: 'success'
+            });
+            this.list();
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }, list() {
+        this.$axios.post("/ruleEngine/rule/list", {
+          "page": {
+            "pageSize": this.page.pageSize,
+            "pageIndex": this.page.pageIndex
+          },
+          "query": {
+            "name": this.search.form.name,
+            "code": this.search.form.code,
+          },
+          "orders": [
+            {
+              "columnName": "id",
+              "desc": true
+            }
+          ]
+        }).then(res => {
+          if (res.data != null) {
+            this.tableData = res.data.rows;
+
+            this.page.total = res.data.page.total;
+          }
+          this.loading = false;
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }, createRule() {
+        this.$router.push("/RuleConfig")
+      }
+    }, mounted() {
+      this.list();
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>
