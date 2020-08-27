@@ -35,7 +35,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="函数" prop="valueType" v-if="add.form.type===6">
+        <el-form-item label="函数名称" prop="valueType" v-if="add.form.type===6">
           <el-select
             v-model="add.form.function.name"
             filterable
@@ -91,10 +91,10 @@
               </el-select>
 
               <el-input-number v-else-if="pv.type===4" v-model="pv.value" :controls="false"
-                               :max="10000000000000" style="width: 193px"></el-input-number>
+                               :max="10000000000000" style="width: 193px;"></el-input-number>
 
               <el-select
-                v-else-if="pv.type===1||pv.type===2"
+                v-else-if="pv.type===1||pv.type===0"
                 v-model="pv.valueName"
                 filterable
                 remote
@@ -170,8 +170,8 @@
       </el-table-column>
 
       <el-table-column
-        prop="value"
-        label="变量值">
+        label="变量值"
+        :formatter="formatterValue">
       </el-table-column>
 
       <el-table-column
@@ -227,7 +227,7 @@
             options: [],
             id: null,
             name: '',
-            value: null,
+            value: '',
             type: null,
             valueType: null,
             description: null,
@@ -248,7 +248,7 @@
       },
       typeChange() {
         this.add.form.options = [];
-        this.add.form.value = '';
+        this.add.form.value = undefined;
         this.add.form.valueName = '';
       },
       leftRemoteMethod(query, pv) {
@@ -286,6 +286,12 @@
         pv.value = '';
         pv.valueName = '';
         pv.options = [];
+      },
+      formatterValue(row, column) {
+        if (row.type === 2) {
+          return row.value;
+        }
+        return "( 函数 )";
       },
       remoteMethod(query) {
         if (query !== '') {
@@ -335,7 +341,7 @@
           options: [],
           id: null,
           name: '',
-          value: null,
+          value: '',
           type: null,
           valueType: null,
           description: null,
@@ -538,7 +544,11 @@
     }
   }
 </script>
-
+<style>
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
+</style>
 <style scoped>
 
 </style>
