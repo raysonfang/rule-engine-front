@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <el-row>
-          <el-col :span="2">
+          <el-col :span="2" >
             <div class="grid-content bg-purple">
               <img src="../assets/logo4.png" class="logo"/>
             </div>
@@ -16,7 +16,7 @@
           <el-col :span="2">
             <div class="grid-content bg-purple user">
               <el-dropdown @command="rightHandleCommand" trigger="click">
-          <span class="el-dropdown-link username pointer">
+          <span class="el-dropdown-link username pointer" style="float: right">
             {{username}}&nbsp;<i class="el-icon-arrow-down"></i>
           </span>
                 <el-dropdown-menu slot="dropdown">
@@ -70,12 +70,12 @@
                 <span>设置</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="/setting">系统设置</el-menu-item>
+                <el-menu-item index="/systemSetting">系统设置</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1200px">
+        <el-main style="min-width: 1400px">
           <router-view/>
         </el-main>
       </el-container>

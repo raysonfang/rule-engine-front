@@ -170,8 +170,11 @@
       </el-table-column>
 
       <el-table-column
-        label="变量值"
-        :formatter="formatterValue">
+        label="变量值">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.type === 3" size="medium"  effect="plain">（ 函数 ）</el-tag>
+          <span v-else>{{scope.row.value}}</span>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -286,12 +289,6 @@
         pv.value = '';
         pv.valueName = '';
         pv.options = [];
-      },
-      formatterValue(row, column) {
-        if (row.type === 2) {
-          return row.value;
-        }
-        return "( 函数 )";
       },
       remoteMethod(query) {
         if (query !== '') {
@@ -429,7 +426,7 @@
         this.list();
       },
       handleCurrentChange(val) {
-        this.page.currentPage = val;
+        this.page.pageIndex = val;
         this.list();
       },
       list() {

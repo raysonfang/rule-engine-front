@@ -193,7 +193,7 @@
         this.list();
       },
       handleCurrentChange(val) {
-        this.page.currentPage = val;
+        this.page.pageIndex = val;
         this.list();
       },
       list() {

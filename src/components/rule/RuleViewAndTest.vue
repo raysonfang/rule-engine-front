@@ -2,29 +2,7 @@
   <div>
     <el-row>
       <el-col :span="6">
-
-        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
-          <div slot="header" class="box-card-header">
-            <span>基本信息</span>
-          </div>
-          <div>
-            <el-form label-width="40px">
-              <el-form-item label="名称" style="margin-top: -8px;">
-                <el-input v-model="name" :readonly="true"></el-input>
-              </el-form-item>
-              <el-form-item label="Code" style="margin-top: -8px;">
-                <el-input v-model="code" :readonly="true"></el-input>
-              </el-form-item>
-              <el-form-item label="说明" style="margin-top: -8px;">
-                <el-input type="textarea" v-model="description" :readonly="true" resize="none"></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-card>
-
-        <br><br>
-
-
+        &nbsp;
       </el-col>
       <el-col :span="12">
         <el-row>
@@ -74,7 +52,7 @@
                 <br>
                 <div style="margin-left: 20px;">
                   <el-alert :closable="false" type="success" style="padding: 6px 0 8px 0">
-                    {{action.variableValue!=null?action.variableValue:action.valueName}}
+                    {{action.variableValue!=null?action.variableValue:(action.valueName===''?'空':action.valueName)}}
                   </el-alert>
                 </div>
 
@@ -82,7 +60,7 @@
                 <br>
                 <div style="margin-left: 20px;">
                   <el-alert :closable="false" type="warning" style="padding: 6px 0 8px 0">
-                    {{enableDefaultAction===0?(defaultAction.variableValue!=null?defaultAction.variableValue:defaultAction.valueName):'空'}}
+                    {{enableDefaultAction===0?(defaultAction.variableValue!=null?defaultAction.variableValue:(defaultAction.valueName===''?'空':defaultAction.valueName)):'null'}}
                   </el-alert>
                 </div>
 
@@ -170,7 +148,9 @@
               </el-form-item>
             </el-form>
 
-            <el-progress v-else type="circle" style="margin-left: 116px" :percentage="runPercentage"></el-progress>
+            <div v-else style="text-align: center">
+              <el-progress type="circle" :percentage="runPercentage"></el-progress>
+            </div>
 
           </div>
 
@@ -261,6 +241,7 @@
         }
       },
       run() {
+        this.runEnd = false;
         this.runPercentage = 20;
         const params = {};
         this.request.param.forEach((e) => {
@@ -275,11 +256,12 @@
           this.runPercentage = 40;
           let da = res.data;
           if (da != null) {
-            this.runData.value = da.value;
+            this.runData.value = da.value + "";
             this.runData.valueType = da.valueType;
             this.runPercentage = 100;
             setTimeout(() => {
               this.runEnd = true;
+              this.runPercentage = 10;
             }, 1000);
           } else {
             this.runPercentage = 10;
@@ -336,7 +318,11 @@
     }
   }
 </script>
-
+<style>
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
+</style>
 <style scoped>
 
   .item {

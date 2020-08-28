@@ -43,7 +43,7 @@
       <el-table-column
         prop="code"
         label="Code"
-        width="200">
+        width="230">
       </el-table-column>
 
       <el-table-column
@@ -55,7 +55,8 @@
       <el-table-column
         prop="status"
         label="规则状态"
-        width="140">
+        width="140"
+        :formatter="formatterStatus">
       </el-table-column>
 
       <el-table-column
@@ -109,6 +110,12 @@
         },
       }
     }, methods: {
+      formatterStatus(row) {
+        if (row.status === 1) {
+          return "已发布";
+        }
+        return "编辑中"
+      },
       reset(formName) {
         this.$refs[formName].resetFields();
         this.list();
@@ -117,10 +124,15 @@
         this.list();
       },
       handleCurrentChange(val) {
-        this.page.currentPage = val;
+        this.page.pageIndex = val;
         this.list();
       },
       edit(row) {
+        // 已发布
+        if (row.status === 1) {
+          this.$router.push({path: '/RuleViewAndTest', query: {ruleId: row.id}});
+          return;
+        }
         this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
       },
       deleteRow(row) {
@@ -166,7 +178,7 @@
           console.log(error);
         });
       }, createRule() {
-        this.$router.push("/RuleConfig")
+        this.$router.push("/RuleDefinition")
       }
     }, mounted() {
       this.list();

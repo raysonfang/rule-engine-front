@@ -13,6 +13,8 @@ import RuleConfig from '@/components/rule/RuleConfig.vue'
 import RuleViewAndTest from '@/components/rule/RuleViewAndTest.vue'
 import RuleDefinition from '@/components/rule/RuleDefinition.vue'
 
+import SystemSetting from '@/components/setting/SystemSetting.vue'
+
 Vue.use(Router);
 
 export default new Router({
@@ -66,6 +68,10 @@ export default new Router({
           path: '/ruleDefinition',
           name: 'RuleDefinition',
           component: RuleDefinition
+        }, {
+          path: '/systemSetting',
+          name: 'SystemSetting',
+          component: SystemSetting
         },
       ]
     },

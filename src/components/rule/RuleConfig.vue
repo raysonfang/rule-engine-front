@@ -2,24 +2,7 @@
   <div id="ruleConfig">
     <el-row>
       <el-col :span="6">
-        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
-          <div slot="header" class="box-card-header">
-            <span>基本信息</span>
-          </div>
-          <div>
-            <el-form ref="form" :model="form" label-width="40px">
-              <el-form-item label="名称" prop="name" style="margin-top: -8px;">
-                <el-input v-model="form.name"></el-input>
-              </el-form-item>
-              <el-form-item label="Code" prop="code" style="margin-top: -8px;">
-                <el-input v-model="form.code" :readonly="form.id!==null"></el-input>
-              </el-form-item>
-              <el-form-item label="说明" prop="description" style="margin-top: -8px;">
-                <el-input type="textarea" v-model="form.description"></el-input>
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-card>
+        &nbsp;
       </el-col>
       <el-col :span="12">
 
@@ -226,7 +209,8 @@
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="22">
             <el-button type="primary" @click="nextStep()" style="float: right;margin-left: 20px">下 一 步</el-button>
-            <el-button type="primary" @click="saveOrUpdate()" style="float: right;">保存</el-button>
+            <el-button type="primary" @click="previous()" style="float: right;margin-left: 20px">上 一 步</el-button>
+            <el-button type="primary" @click="update()" style="float: right;">保存</el-button>
           </el-col>
           <el-col :span="1">&nbsp;</el-col>
         </el-row>
@@ -300,12 +284,7 @@
           loading: false,
           value: null,
         },
-        form: {
-          id: null,
-          name: null,
-          code: null,
-          description: null
-        },
+        id: null,
         conditionGroupDraggable: false,
         currentConditionDragging: null,
         currentConditionCgId: null,
@@ -314,6 +293,9 @@
       }
     },
     methods: {
+      previous() {
+        this.$router.push({path: '/RuleDefinition', query: {ruleId: this.id}});
+      },
       getConditionNamePrefix(type) {
         if (type === 0) {
           return "元素";
@@ -425,67 +407,33 @@
         this.condition.value = null;
         this.condition.options = [];
       },
-      saveOrUpdate() {
-        if (this.form.id == null) {
-          this.$axios.post("/ruleEngine/rule/saveRule", {
-            "code": this.form.code,
-            "name": this.form.name,
-            "description": this.form.description,
-            "conditionGroup": this.conditionGroup,
-            "action": {
-              "value": this.action.value,
-              "type": this.action.type > 1 ? 2 : this.action.type,
-              "valueType": this.action.valueType
-            },
-            "enableDefaultAction": this.enableDefaultAction,
-            "defaultAction": {
-              "value": this.defaultAction.value,
-              "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
-              "valueType": this.defaultAction.valueType
-            }
-          }).then(res => {
-            let da = res.data;
-            if (da) {
-              this.$message({
-                showClose: true,
-                message: '保存成功',
-                type: 'success'
-              });
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        } else {
-          this.$axios.post("/ruleEngine/rule/updateRule", {
-            "id": this.form.id,
-            "code": this.form.code,
-            "name": this.form.name,
-            "description": this.form.description,
-            "enableDefaultAction": this.enableDefaultAction,
-            "conditionGroup": this.conditionGroup,
-            "action": {
-              "value": this.action.value,
-              "type": this.action.type > 1 ? 2 : this.action.type,
-              "valueType": this.action.valueType
-            },
-            "defaultAction": {
-              "value": this.defaultAction.value,
-              "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
-              "valueType": this.defaultAction.valueType
-            }
-          }).then(res => {
-            let da = res.data;
-            if (da) {
-              this.$message({
-                showClose: true,
-                message: '更新成功',
-                type: 'success'
-              });
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        }
+      update() {
+        this.$axios.post("/ruleEngine/rule/updateRule", {
+          "id": this.id,
+          "enableDefaultAction": this.enableDefaultAction,
+          "conditionGroup": this.conditionGroup,
+          "action": {
+            "value": this.action.value,
+            "type": this.action.type > 1 ? 2 : this.action.type,
+            "valueType": this.action.valueType
+          },
+          "defaultAction": {
+            "value": this.defaultAction.value,
+            "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
+            "valueType": this.defaultAction.valueType
+          }
+        }).then(res => {
+          let da = res.data;
+          if (da) {
+            this.$message({
+              showClose: true,
+              message: '更新成功',
+              type: 'success'
+            });
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
       },
       getType(type, valueType) {
         if (type > 1) {
@@ -501,8 +449,30 @@
         }
         return type;
       },
-      nextStep(row) {
-        this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.form.id}});
+      nextStep() {
+        // 先更新规则，到待发布
+        this.$axios.post("/ruleEngine/rule/generationRelease", {
+          "id": this.id,
+          "enableDefaultAction": this.enableDefaultAction,
+          "conditionGroup": this.conditionGroup,
+          "action": {
+            "value": this.action.value,
+            "type": this.action.type > 1 ? 2 : this.action.type,
+            "valueType": this.action.valueType
+          },
+          "defaultAction": {
+            "value": this.defaultAction.value,
+            "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
+            "valueType": this.defaultAction.valueType
+          }
+        }).then(res => {
+          let da = res.data;
+          if (da) {
+            this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
       },
       conditionRemoteMethod(query) {
         if (query !== '') {
@@ -644,19 +614,16 @@
         }
         return value.uuid;
       },
-      getRule(id) {
-        if (id === undefined) {
+      getRule() {
+        if (this.id === undefined) {
           return;
         }
         this.$axios.post("/ruleEngine/rule/getRule", {
-          "id": id
+          "id": this.id
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            this.form.id = da.id;
-            this.form.code = da.code;
-            this.form.name = da.name;
-            this.form.description = da.description;
+            this.id = da.id;
             // condition group
             this.conditionGroup = da.conditionGroup;
             // action
@@ -664,13 +631,14 @@
             this.action.value = da.action.value;
             this.action.valueName = da.action.valueName;
             this.action.valueType = da.action.valueType;
-
             // default action
             this.defaultAction.type = this.getType(da.defaultAction.type, da.defaultAction.valueType);
-            this.defaultAction.value = da.defaultAction.value;
-            this.defaultAction.valueName = da.defaultAction.valueName;
-            this.defaultAction.valueType = da.defaultAction.valueType;
             this.enableDefaultAction = da.enableDefaultAction;
+            if (da.defaultAction != null) {
+              this.defaultAction.value = da.defaultAction.value;
+              this.defaultAction.valueName = da.defaultAction.valueName;
+              this.defaultAction.valueType = da.defaultAction.valueType;
+            }
           }
         }).catch(function (error) {
           console.log(error);
@@ -678,14 +646,9 @@
       }
     },
     mounted() {
-      let ruleId = this.$route.query.ruleId;
-      this.getRule(ruleId);
-    }, created() {
-
-    }, beforeDestroy() {
-
-    },
-
+      this.id = this.$route.query.ruleId;
+      this.getRule();
+    }
   }
 </script>
 <style>

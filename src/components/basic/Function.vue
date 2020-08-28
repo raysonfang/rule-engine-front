@@ -133,7 +133,7 @@
         this.list();
       },
       handleCurrentChange(val) {
-        this.page.currentPage = val;
+        this.page.pageIndex = val;
         this.list();
       }, view(row) {
         this.$axios.post("/ruleEngine/function/get", {
