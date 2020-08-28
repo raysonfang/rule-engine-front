@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-form ref="form" :inline="true" :model="search.form" label-width="40px">
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
 
       <el-form-item label="名称" prop="name">
         <el-input v-model="search.form.name"></el-input>
@@ -8,7 +8,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
-        <el-button type="reset" @click="reset('search.form')">重置</el-button>
+        <el-button type="reset" @click="reset('searchForm')">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -172,7 +172,7 @@
       <el-table-column
         label="变量值">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.type === 3" size="medium"  effect="plain">（ 函数 ）</el-tag>
+          <el-tag v-if="scope.row.type === 3" size="medium" effect="plain">（ 函数 ）</el-tag>
           <span v-else>{{scope.row.value}}</span>
         </template>
       </el-table-column>

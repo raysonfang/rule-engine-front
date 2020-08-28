@@ -75,7 +75,7 @@
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1400px">
+        <el-main style="min-width: 1300px">
           <router-view/>
         </el-main>
       </el-container>

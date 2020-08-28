@@ -1,14 +1,14 @@
 <template>
   <div id="app">
 
-    <el-form ref="form" :inline="true" :model="search.form" label-width="40px">
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
         <el-input v-model="search.form.name"></el-input>
       </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
-        <el-button type="reset" @click="reset('search.form')">重置</el-button>
+        <el-button type="reset" @click="reset('searchForm')">重置</el-button>
       </el-form-item>
     </el-form>
 

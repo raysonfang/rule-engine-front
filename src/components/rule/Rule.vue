@@ -1,23 +1,24 @@
 <template>
   <div id="app">
-    <el-form ref="form" :inline="true" :model="search.form" label-width="70px">
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="75px">
       <el-form-item label="规则名称" prop="name">
         <el-input v-model="search.form.name"></el-input>
       </el-form-item>
-
-      <el-form-item label="规则状态" prop="status">
+      <el-form-item label="规则Code" prop="code">
+        <el-input v-model="search.form.code"></el-input>
+      </el-form-item>
+      <el-form-item label="规则状态">
         <el-select v-model="search.form.status"
                    placeholder="请选择数据 ">
           <el-option label="全部" :value="null"></el-option>
           <el-option label="编辑中" value="0"></el-option>
-          <el-option label="待发布" value="1"></el-option>
-          <el-option label="已发布" value="2"></el-option>
+          <el-option label="可执行" value="1"></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
-        <el-button type="reset" @click="reset('search.form')">重置</el-button>
+        <el-button type="reset" @click="reset('searchForm')">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -105,6 +106,7 @@
         search: {
           form: {
             name: null,//根据规则名称搜索
+            code: null,
             status: null//规则状态搜索 编辑中，已发布，待发布规则
           }
         },
@@ -112,11 +114,12 @@
     }, methods: {
       formatterStatus(row) {
         if (row.status === 1) {
-          return "已发布";
+          return "可执行";
         }
         return "编辑中"
       },
       reset(formName) {
+        this.search.form.status = null;
         this.$refs[formName].resetFields();
         this.list();
       }, handleSizeChange(val) {
@@ -160,6 +163,7 @@
           "query": {
             "name": this.search.form.name,
             "code": this.search.form.code,
+            "status": this.search.form.status,
           },
           "orders": [
             {

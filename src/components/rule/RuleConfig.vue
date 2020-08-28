@@ -86,11 +86,11 @@
               <div slot="header" class="box-card-header">
                 <span>结果</span>
               </div>
-              <div class="item">
-                <el-row>
-                  <el-col :span="6">
-                    <el-select v-model="action.type" placeholder="请选择数据类型"
-                               @change="actionTypeChange()">
+              <div>
+                <el-form ref="actionForm" :model="action" :rules="actionRules">
+                  <el-form-item prop="type" class="el-col-6">
+                    <el-select v-model="action.type" placeholder="请选择数据类型" @change="actionTypeChange()"
+                               style="width: 167.33px">
                       <el-option label="元素" :value="0"></el-option>
                       <el-option label="变量" :value="1"></el-option>
                       <el-option label="字符串" :value="2"
@@ -102,26 +102,28 @@
                       <el-option label="集合" :value="5"
                                  @click.native="action.valueType='COLLECTION'"></el-option>
                     </el-select>
-                  </el-col>
-                  <el-col :span="1">&nbsp;</el-col>
-                  <el-col :span="17">
-                    <el-select v-if="action.type===3" v-model="action.value"
+                  </el-form-item>
+
+                  <el-form-item class="el-col-1">
+                    &nbsp;
+                  </el-form-item>
+
+                  <el-form-item prop="value" class="el-col-17">
+                    <el-select v-if="action.type===3" v-model="action.value" prop="value"
                                placeholder="请选择数据 ">
                       <el-option label="true" value="true"></el-option>
                       <el-option label="false" value="false"></el-option>
                     </el-select>
 
-                    <el-input v-else-if="action.type>1" v-model="action.value"></el-input>
-
-                    <el-select
-                      v-else
-                      v-model="action.valueName"
-                      filterable
-                      remote
-                      reserve-keyword
-                      placeholder="请输入关键词"
-                      :remote-method="actionRemoteMethod"
-                      :loading="action.loading">
+                    <el-select prop="value"
+                               v-else-if="action.type===0||action.type===1"
+                               v-model="action.valueName"
+                               filterable
+                               remote
+                               reserve-keyword
+                               placeholder="请输入关键词"
+                               :remote-method="actionRemoteMethod"
+                               :loading="action.loading">
                       <el-option
                         v-for="item in action.options"
                         :key="item.id"
@@ -131,8 +133,17 @@
                       </el-option>
                     </el-select>
 
-                  </el-col>
-                </el-row>
+                    <div v-else-if="action.valueType==='NUMBER'">
+                      <el-input-number v-model="action.value" :controls="false"
+                                       :max="10000000000000" style="width: 193px"></el-input-number>
+                    </div>
+
+                    <el-input v-else v-model="action.value" prop="value"></el-input>
+
+                  </el-form-item>
+
+                </el-form>
+
               </div>
 
             </el-card>
@@ -174,10 +185,8 @@
                       <el-option label="false" value="false"></el-option>
                     </el-select>
 
-                    <el-input v-else-if="defaultAction.type>1" v-model="defaultAction.value"></el-input>
-
                     <el-select
-                      v-else
+                      v-else-if="defaultAction.type===1||defaultAction.type===0"
                       v-model="defaultAction.valueName"
                       filterable
                       remote
@@ -194,6 +203,13 @@
                       </el-option>
                     </el-select>
 
+
+                    <div v-else-if="defaultAction.valueType==='NUMBER'">
+                      <el-input-number v-model="action.value" :controls="false"
+                                       :max="10000000000000" style="width: 193px"></el-input-number>
+                    </div>
+
+                    <el-input v-else v-model="defaultAction.value"></el-input>
                   </el-col>
                 </el-row>
               </div>
@@ -261,22 +277,29 @@
       return {
         currentConditionGroupId: null,
         action: {
-          value: '',
-          valueName: '',
+          value: undefined,
+          valueName: null,
           valueType: null,
           type: null,
           loading: false,
           options: []
         },
+        actionRules: {
+          type: [
+            {required: true, message: '请选择规则结果类型', trigger: 'blur'},
+          ],
+          value: [
+            {required: true, message: '请输入结果值', trigger: 'blur'},
+          ],
+        },
         enableDefaultAction: 1,
         defaultAction: {
-          value: '',
-          valueName: '',
+          value: undefined,
+          valueName: null,
           valueType: null,
           type: null,
           loading: false,
           options: [],
-          switchs: false,//默认结果开关
         },
         condition: {
           dialogFormVisible: false,
@@ -377,13 +400,13 @@
       },
       actionTypeChange() {
         this.action.options = [];
-        this.action.value = '';
-        this.action.valueName = '';
+        this.action.value = undefined;
+        this.action.valueName = null;
       },
       defaultActionTypeChange() {
         this.defaultAction.options = [];
-        this.defaultAction.value = '';
-        this.defaultAction.valueName = '';
+        this.defaultAction.value = undefined;
+        this.defaultAction.valueName = null;
       },
       selectCondition(item) {
         this.conditionGroup.forEach((value, index) => {
@@ -450,28 +473,32 @@
         return type;
       },
       nextStep() {
-        // 先更新规则，到待发布
-        this.$axios.post("/ruleEngine/rule/generationRelease", {
-          "id": this.id,
-          "enableDefaultAction": this.enableDefaultAction,
-          "conditionGroup": this.conditionGroup,
-          "action": {
-            "value": this.action.value,
-            "type": this.action.type > 1 ? 2 : this.action.type,
-            "valueType": this.action.valueType
-          },
-          "defaultAction": {
-            "value": this.defaultAction.value,
-            "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
-            "valueType": this.defaultAction.valueType
+        this.$refs['actionForm'].validate((valid) => {
+          if (valid) {
+            // 先更新规则，到待发布
+            this.$axios.post("/ruleEngine/rule/generationRelease", {
+              "id": this.id,
+              "enableDefaultAction": this.enableDefaultAction,
+              "conditionGroup": this.conditionGroup,
+              "action": {
+                "value": this.action.value,
+                "type": this.action.type > 1 ? 2 : this.action.type,
+                "valueType": this.action.valueType
+              },
+              "defaultAction": {
+                "value": this.defaultAction.value,
+                "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
+                "valueType": this.defaultAction.valueType
+              }
+            }).then(res => {
+              let da = res.data;
+              if (da) {
+                this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
+              }
+            }).catch(function (error) {
+              console.log(error);
+            });
           }
-        }).then(res => {
-          let da = res.data;
-          if (da) {
-            this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
-          }
-        }).catch(function (error) {
-          console.log(error);
         });
       },
       conditionRemoteMethod(query) {
@@ -660,6 +687,9 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
   }
 
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
 </style>
 <style scoped>
   .item {
@@ -682,5 +712,6 @@
   .conditionGroupCard:last-child {
     margin-bottom: 0;
   }
+
 
 </style>
