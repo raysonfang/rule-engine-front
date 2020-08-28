@@ -89,8 +89,7 @@
               <div>
                 <el-form ref="actionForm" :model="action" :rules="actionRules">
                   <el-form-item prop="type" class="el-col-6">
-                    <el-select v-model="action.type" placeholder="请选择数据类型" @change="actionTypeChange()"
-                               style="width: 167.33px">
+                    <el-select v-model="action.type" placeholder="请选择数据类型" @change="actionTypeChange()">
                       <el-option label="元素" :value="0"></el-option>
                       <el-option label="变量" :value="1"></el-option>
                       <el-option label="字符串" :value="2"
@@ -161,9 +160,10 @@
               </div>
               <div>
                 <el-switch v-model="enableDefaultAction" :active-value="0" :inactive-value="1"></el-switch>
-                <br><br>
-                <el-row>
-                  <el-col :span="6">
+                <br>
+                <br>
+                <el-form ref="defaultActionForm" :model="defaultAction" :rules="defaultActionRules">
+                  <el-form-item prop="type" class="el-col-6">
                     <el-select v-model="defaultAction.type" placeholder="请选择数据类型"
                                @change="defaultActionTypeChange()">
                       <el-option label="元素" :value="0"></el-option>
@@ -177,9 +177,11 @@
                       <el-option label="集合" :value="5"
                                  @click.native="defaultAction.valueType='COLLECTION'"></el-option>
                     </el-select>
-                  </el-col>
-                  <el-col :span="1">&nbsp;</el-col>
-                  <el-col :span="17">
+                  </el-form-item>
+                  <el-form-item class="el-col-1">
+                    &nbsp;
+                  </el-form-item>
+                  <el-form-item prop="value" class="el-col-17">
                     <el-select v-if="defaultAction.type===3" v-model="defaultAction.value">
                       <el-option label="true" value="true"></el-option>
                       <el-option label="false" value="false"></el-option>
@@ -210,10 +212,9 @@
                     </div>
 
                     <el-input v-else v-model="defaultAction.value"></el-input>
-                  </el-col>
-                </el-row>
+                  </el-form-item>
+                </el-form>
               </div>
-
             </el-card>
 
           </el-col>
@@ -230,7 +231,6 @@
           </el-col>
           <el-col :span="1">&nbsp;</el-col>
         </el-row>
-
 
       </el-col>
       <el-col :span="6">
@@ -285,6 +285,14 @@
           options: []
         },
         actionRules: {
+          type: [
+            {required: true, message: '请选择规则结果类型', trigger: 'blur'},
+          ],
+          value: [
+            {required: true, message: '请输入结果值', trigger: 'blur'},
+          ],
+        },
+        defaultActionRules: {
           type: [
             {required: true, message: '请选择规则结果类型', trigger: 'blur'},
           ],
@@ -473,8 +481,13 @@
         return type;
       },
       nextStep() {
-        this.$refs['actionForm'].validate((valid) => {
+        let ref = this.$refs['actionForm'];
+        if (this.enableDefaultAction === 0) {
+          ref = this.$refs['actionForm', 'defaultActionForm'];
+        }
+        ref.validate((valid) => {
           if (valid) {
+            //defaultActionForm
             // 先更新规则，到待发布
             this.$axios.post("/ruleEngine/rule/generationRelease", {
               "id": this.id,
