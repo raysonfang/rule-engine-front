@@ -15,14 +15,14 @@
     <el-button type="primary" @click="addVarForm()">新建变量</el-button>
 
     <el-dialog :title="add.form.id!==null?'更新变量':'新建变量'" :visible.sync="add.dialogFormVisible">
-      <el-form ref="add.form" :rules="add.rules" :model="add.form" label-width="70px">
+      <el-form ref="addForm" :rules="add.rules" :model="add.form" label-width="70px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="add.form.name"></el-input>
         </el-form-item>
 
         <el-form-item label="数据类型" prop="valueType">
           <el-select v-model="add.form.type" placeholder="请选择数据类型"
-                     @change="typeChange()">
+                     @change="typeChange()" :disabled="add.form.id!=null">
             <el-option label="函数" :value="6"></el-option>
             <el-option label="字符串" :value="2"
                        @click.native="add.form.valueType='STRING'"></el-option>
@@ -37,6 +37,7 @@
 
         <el-form-item label="函数名称" prop="valueType" v-if="add.form.type===6">
           <el-select
+            :disabled="add.form.id!=null"
             v-model="add.form.function.name"
             filterable
             remote
@@ -141,7 +142,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="add.dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save('add.form')">保 存</el-button>
+        <el-button type="primary" @click="saveOrUpdate('addForm')">保 存</el-button>
       </div>
     </el-dialog>
 
@@ -349,7 +350,7 @@
           }
         };
       },
-      save(formName) {
+      saveOrUpdate(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             if (this.add.form.id != null) {
@@ -376,8 +377,8 @@
                     type: 'success'
                   });
                   this.list();
-                  this.$refs[formName].resetFields();
                   this.add.dialogFormVisible = false;
+                  this.$refs[formName].resetFields();
                 }
               }).catch(function (error) {
                 console.log(error);
@@ -405,8 +406,8 @@
                     type: 'success'
                   });
                   this.list();
-                  //this.$refs[formName].resetFields();
                   this.add.dialogFormVisible = false;
+                  this.$refs[formName].resetFields();
                 }
               }).catch(function (error) {
                 console.log(error);

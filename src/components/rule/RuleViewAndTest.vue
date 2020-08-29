@@ -1,8 +1,24 @@
 <template>
   <div>
+
+    <el-steps :active="3" align-center>
+      <el-step title="规则定义" icon="el-icon-edit"></el-step>
+      <el-step title="规则定义" icon="el-icon-connection"></el-step>
+      <el-step title="规则预览" icon="el-icon-view"></el-step>
+    </el-steps>
+    <br>
+    <br>
+
     <el-row>
       <el-col :span="6">
-        &nbsp;
+        <el-card class="box-card">
+          <div slot="header" class="box-card-header">
+            <span>规则</span>
+          </div>
+          <div>
+
+          </div>
+        </el-card>
       </el-col>
       <el-col :span="12">
         <el-row>
@@ -114,11 +130,8 @@
             <i class="el-icon-video-play pointer"
                style="float: right; padding: 14px 0px;color: #5ba0f8;" @click="run"></i>
 
-            <i class="el-icon-document-delete pointer"
-               style="float: right; padding: 14px 10px;color: #5ba0f8;"></i>
-
             <i class=" el-icon-back pointer"
-               style="float: right; padding: 14px 1px;color: #5ba0f8;" @click="runGoBack"
+               style="float: right; padding: 14px 9px;color: #5ba0f8;" @click="runGoBack"
                v-if="runEnd"></i>
           </div>
 
@@ -166,10 +179,10 @@
         </el-card>
 
       </el-col>
-
-
     </el-row>
-    <br>
+
+    <el-backtop></el-backtop>
+
   </div>
 </template>
 
@@ -218,7 +231,6 @@
           type: null,
           loading: false,
           options: [],
-          switchs: false,//默认结果开关
         }
       }
     }, methods: {
@@ -289,10 +301,12 @@
             this.action.variableValue = da.action.variableValue;
 
             // default action
-            this.defaultAction.value = da.defaultAction.value;
-            this.defaultAction.valueName = da.defaultAction.valueName;
-            this.defaultAction.variableValue = da.defaultAction.variableValue;
             this.enableDefaultAction = da.enableDefaultAction;
+            if (da.defaultAction !== null) {
+              this.defaultAction.value = da.defaultAction.value;
+              this.defaultAction.valueName = da.defaultAction.valueName;
+              this.defaultAction.variableValue = da.defaultAction.variableValue;
+            }
           }
         }).catch(function (error) {
           console.log(error);
@@ -313,8 +327,6 @@
       }).catch(function (error) {
         console.log(error);
       });
-
-
     }
   }
 </script>

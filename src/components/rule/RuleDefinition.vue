@@ -1,5 +1,12 @@
 <template>
   <div id="ruleDefinition">
+    <el-steps :active="1" align-center>
+      <el-step title="规则定义" icon="el-icon-edit"></el-step>
+      <el-step title="规则定义" icon="el-icon-connection" class="stepp"></el-step>
+      <el-step title="规则预览" icon="el-icon-view" class="stepp"></el-step>
+    </el-steps>
+    <br>
+    <br>
 
     <el-row>
       <el-col :span="6">
@@ -16,7 +23,7 @@
                 <el-input v-model="form.name"></el-input>
               </el-form-item>
               <el-form-item label="Code" prop="code">
-                <el-input v-model="form.code" :readonly="form.id!==undefined"></el-input>
+                <el-input v-model="form.code" :disabled="form.id!==undefined"></el-input>
               </el-form-item>
               <el-form-item label="说明" prop="description">
                 <el-input type="textarea" :autosize="{ minRows: 5}" v-model="form.description"></el-input>
@@ -35,7 +42,6 @@
         &nbsp;
       </el-col>
     </el-row>
-
 
   </div>
 </template>
@@ -110,6 +116,16 @@
   }
 </script>
 
+<style>
+  .stepp .el-step__title.is-process {
+    font-weight: 400;
+    color: #C0C4CC;
+  }
+
+  .stepp .el-step__icon-inner {
+    color: #C0C4CC;
+  }
+</style>
 <style scoped>
 
 </style>

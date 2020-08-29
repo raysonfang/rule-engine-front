@@ -23,11 +23,11 @@
         </el-form-item>
 
         <el-form-item label="Code" prop="code">
-          <el-input v-model="add.form.code"></el-input>
+          <el-input v-model="add.form.code" :disabled="add.form.id!==null"></el-input>
         </el-form-item>
 
         <el-form-item label="数据类型" prop="valueType">
-          <el-select v-model="add.form.valueType" placeholder="请选择数据类型">
+          <el-select v-model="add.form.valueType" placeholder="请选择数据类型" :disabled="add.form.id!=null">
             <el-option label="字符串" value="STRING"></el-option>
             <el-option label="布尔" value="BOOLEAN"></el-option>
             <el-option label="数值" value="NUMBER"></el-option>

@@ -1,5 +1,14 @@
 <template>
   <div id="ruleConfig">
+
+    <el-steps :active="2" align-center>
+      <el-step title="规则定义" icon="el-icon-edit"></el-step>
+      <el-step title="规则定义" icon="el-icon-connection"></el-step>
+      <el-step title="规则预览" icon="el-icon-view" class="stepp"></el-step>
+    </el-steps>
+    <br>
+    <br>
+
     <el-row>
       <el-col :span="6">
         &nbsp;
@@ -264,7 +273,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <br>
+    <el-backtop></el-backtop>
   </div>
 </template>
 
@@ -672,9 +681,9 @@
             this.action.valueName = da.action.valueName;
             this.action.valueType = da.action.valueType;
             // default action
-            this.defaultAction.type = this.getType(da.defaultAction.type, da.defaultAction.valueType);
             this.enableDefaultAction = da.enableDefaultAction;
             if (da.defaultAction != null) {
+              this.defaultAction.type = this.getType(da.defaultAction.type, da.defaultAction.valueType);
               this.defaultAction.value = da.defaultAction.value;
               this.defaultAction.valueName = da.defaultAction.valueName;
               this.defaultAction.valueType = da.defaultAction.valueType;
@@ -703,6 +712,15 @@
   .el-input-number .el-input__inner {
     text-align: left;
   }
+
+  .stepp .el-step__title.is-process {
+    font-weight: 400;
+    color: #C0C4CC;
+  }
+
+  .stepp .el-step__icon-inner {
+    color: #C0C4CC;
+  }
 </style>
 <style scoped>
   .item {
@@ -725,6 +743,4 @@
   .conditionGroupCard:last-child {
     margin-bottom: 0;
   }
-
-
 </style>

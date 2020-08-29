@@ -13,7 +13,7 @@ Vue.use(ElementUI);
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";
 
 //请求后端服务器接口前缀
-const requestBaseURL = "http://192.168.0.101:8010/";
+const requestBaseURL = "http://localhost:8010/";
 Vue.prototype.$requestBaseURL = requestBaseURL;
 
 //axios配置
