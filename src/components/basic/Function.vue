@@ -57,19 +57,17 @@
       </el-table-column>
       <el-table-column
         prop="name"
-        label="名称"
-        sortable
-        width="200">
+        label="名称">
       </el-table-column>
       <el-table-column
         prop="executor"
         label="执行器"
-        sortable
-        width="200">
+        width="240">
       </el-table-column>
       <el-table-column
         prop="returnValueType"
-        label="返回值类型">
+        label="返回值类型"
+        width="200">
       </el-table-column>
       <el-table-column
         prop="createTime"

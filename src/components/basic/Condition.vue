@@ -296,8 +296,17 @@
         };
       },
       isRightTypeSelectView(valueType) {
-        //如果左值为集合时，右值类型全部显示
-        return this.add.form.config.leftValue.valueType === 'COLLECTION' || this.add.form.config.leftValue.valueType === valueType;
+        if (this.add.form.config.leftValue.valueType === valueType) {
+          return true;
+        }
+        // 如果左值为集合时
+        if (this.add.form.config.leftValue.valueType === 'COLLECTION') {
+          if (this.add.form.config.symbol === null) {
+            return true;
+          }
+          // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+          return this.add.form.config.symbol === 'CONTAIN' || this.add.form.config.symbol === 'NOT_CONTAIN';
+        }
       },
       leftValueChange() {
         //左面发生改变，右边也改变
