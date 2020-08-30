@@ -338,18 +338,14 @@
       leftValueChange() {
         //左面发生改变，右边也改变
         this.form.config.symbol = '';
-        this.form.config.rightValue = {
-          value: undefined,
-          valueName: '',
-          type: ''
-        };
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
+        this.form.config.rightValue.type = '';
         this.rightSelect.options = [];
       },
       leftValueTypeChange() {
-        this.form.config.leftValue = {
-          value: undefined,
-          valueName: ''
-        };
+        this.form.config.leftValue.value = undefined;
+        this.form.config.leftValue.valueName = '';
         // 如果是变量或者元素
         if (this.form.config.leftValue.type === 1 || this.form.config.leftValue.type === 0) {
           this.form.config.leftValue.valueType = null;
@@ -357,18 +353,14 @@
         this.leftSelect.options = [];
         this.form.config.symbol = '';
         //左面发生改变，右边也改变
-        this.form.config.rightValue = {
-          value: undefined,
-          valueName: '',
-          type: ''
-        };
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
+        this.form.config.rightValue.type = '';
         this.rightSelect.options = [];
       },
       rightValueTypeChange() {
-        this.form.config.rightValue = {
-          value: undefined,
-          valueName: ''
-        };
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
         this.rightSelect.options = [];
       },
       saveOrUpdate(formName) {
