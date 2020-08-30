@@ -3,7 +3,7 @@
 
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
-        <el-input v-model="search.form.name"></el-input>
+        <el-input v-model="search.form.name"/>
       </el-form-item>
 
       <el-form-item>
@@ -14,49 +14,43 @@
 
     <el-button type="primary" @click="addConditionForm">新建条件</el-button>
 
-    <el-dialog :title="add.form.id===null?'新建条件':'更新条件'" :visible.sync="add.dialogFormVisible" width="700px">
-      <el-form ref="add.form" :rules="add.rules" :model="add.form" label-width="70px">
+    <el-dialog :title="form.id===null?'新建条件':'更新条件'" :visible.sync="dialogFormVisible" width="700px">
+      <el-form ref="addForm" :rules="rules" :model="form" label-width="70px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="add.form.name"></el-input>
+          <el-input v-model="form.name"/>
         </el-form-item>
 
 
-        <el-form-item label="条件配置" prop="valueType">
-
-          <el-form-item label="左值" class="conditionConfigItem">
+        <el-form-item label="条件配置">
+          <el-form-item label="左值" style="margin-top: 18px">
             <el-col :span="10">
-              <el-form-item prop="leftValueType">
-                <el-select v-model="add.form.config.leftValue.type" placeholder="请选择数据类型"
+              <el-form-item prop="config.leftValue.type">
+                <el-select v-model="form.config.leftValue.type" placeholder="请选择数据类型"
                            @change="leftValueTypeChange()">
-                  <el-option label="元素" :value="0"></el-option>
-                  <el-option label="变量" :value="1"></el-option>
-                  <el-option label="字符串" :value="2"
-                             @click.native="add.form.config.leftValue.valueType='STRING'"></el-option>
-                  <el-option label="布尔" :value="3"
-                             @click.native="add.form.config.leftValue.valueType='BOOLEAN'"></el-option>
-                  <el-option label="数值" :value="4"
-                             @click.native="add.form.config.leftValue.valueType='NUMBER'"></el-option>
-                  <el-option label="集合" :value="5"
-                             @click.native="add.form.config.leftValue.valueType='COLLECTION'"></el-option>
+                  <el-option label="元素" :value="0"/>
+                  <el-option label="变量" :value="1"/>
+                  <el-option label="字符串" :value="5" @click.native="form.config.leftValue.valueType='STRING'"/>
+                  <el-option label="布尔" :value="6" @click.native="form.config.leftValue.valueType='BOOLEAN'"/>
+                  <el-option label="数值" :value="7" @click.native="form.config.leftValue.valueType='NUMBER'"/>
+                  <el-option label="集合" :value="8" @click.native="form.config.leftValue.valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item prop="leftValue">
+              <el-form-item prop="config.leftValue.value">
+                <el-input-number v-if="form.config.leftValue.type===7" v-model="form.config.leftValue.value"
+                                 :controls="false" :max="10000000000000"
+                                 style="width: 193px"/>
 
-                <el-select v-if="add.form.config.leftValue.type===3" v-model="add.form.config.leftValue.value"
+                <el-select v-else-if="form.config.leftValue.type===6" v-model="form.config.leftValue.value"
                            placeholder="请选择数据 ">
-                  <el-option label="true" value="true"></el-option>
-                  <el-option label="false" value="false"></el-option>
+                  <el-option label="true" value="true"/>
+                  <el-option label="false" value="false"/>
                 </el-select>
 
-                <el-input
-                  v-else-if="add.form.config.leftValue.type>1"
-                  v-model="add.form.config.leftValue.value"></el-input>
-
                 <el-select
-                  v-else
-                  v-model="add.form.config.leftValue.valueName"
+                  v-else-if="form.config.leftValue.type===0||form.config.leftValue.type===1"
+                  v-model="form.config.leftValue.valueName"
                   filterable
                   remote
                   reserve-keyword
@@ -72,6 +66,9 @@
                     @click.native="leftSelectClick(item)">
                   </el-option>
                 </el-select>
+
+                <el-input v-else v-model="form.config.leftValue.value"/>
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
@@ -79,8 +76,8 @@
             </el-col>
           </el-form-item>
 
-          <el-form-item label="运算符" prop="symbol" class="conditionConfigItem">
-            <el-select v-model="add.form.config.symbol" placeholder="请选择运算符">
+          <el-form-item label="运算符" prop="config.symbol" style="margin-top: 18px">
+            <el-select v-model="form.config.symbol" placeholder="请选择运算符">
               <el-option
                 v-for="item in symbolSelect.options"
                 :key="item.name"
@@ -90,43 +87,36 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="右值" class="conditionConfigItem">
+          <el-form-item label="右值" style="margin-top: 18px">
             <el-col :span="10">
-              <el-form-item prop="rightValueType">
-                <el-select v-model="add.form.config.rightValue.type" placeholder="请选择数据类型"
+              <el-form-item prop="config.rightValue.type">
+                <el-select v-model="form.config.rightValue.type" placeholder="请选择数据类型"
                            @change="rightValueTypeChange()">
-                  <el-option label="元素" :value="0"></el-option>
-                  <el-option label="变量" :value="1"></el-option>
-                  <el-option v-if="isRightTypeSelectView('STRING')"
-                             label="字符串" :value="2"
-                             @click.native="add.form.config.rightValue.valueType='STRING'"></el-option>
-                  <el-option v-if="isRightTypeSelectView('BOOLEAN')"
-                             label="布尔" :value="3"
-                             @click.native="add.form.config.rightValue.valueType='BOOLEAN'"></el-option>
-                  <el-option v-if="isRightTypeSelectView('NUMBER')"
-                             label="数值" :value="4"
-                             @click.native="add.form.config.rightValue.valueType='NUMBER'"></el-option>
-                  <el-option v-if="isRightTypeSelectView('COLLECTION')"
-                             label="集合" :value="5"
-                             @click.native="add.form.config.rightValue.valueType='COLLECTION'"></el-option>
+                  <el-option label="元素" :value="0"/>
+                  <el-option label="变量" :value="1"/>
+                  <el-option v-if="isRightTypeSelectView('STRING')" label="字符串" :value="5"/>
+                  <el-option v-if="isRightTypeSelectView('BOOLEAN')" label="布尔" :value="6"/>
+                  <el-option v-if="isRightTypeSelectView('NUMBER')" label="数值" :value="7"/>
+                  <el-option v-if="isRightTypeSelectView('COLLECTION')" label="集合" :value="8"/>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="9">
-              <el-form-item prop="rightValue">
-                <el-select v-if="add.form.config.rightValue.type===3" v-model="add.form.config.rightValue.value"
+              <el-form-item prop="config.rightValue.value">
+
+                <el-input-number v-if="form.config.rightValue.type===7" v-model="form.config.rightValue.value"
+                                 :controls="false" :max="10000000000000"
+                                 style="width: 193px"/>
+
+                <el-select v-else-if="form.config.rightValue.type===6" v-model="form.config.rightValue.value"
                            placeholder="请选择数据 ">
-                  <el-option label="true" value="true"></el-option>
-                  <el-option label="false" value="false"></el-option>
+                  <el-option label="true" value="true"/>
+                  <el-option label="false" value="false"/>
                 </el-select>
 
-                <el-input
-                  v-else-if="add.form.config.rightValue.type>1"
-                  v-model="add.form.config.rightValue.value"></el-input>
-
                 <el-select
-                  v-else
-                  v-model="add.form.config.rightValue.valueName"
+                  v-else-if="form.config.rightValue.type===0||form.config.rightValue.type===1"
+                  v-model="form.config.rightValue.valueName"
                   filterable
                   remote
                   reserve-keyword
@@ -141,6 +131,9 @@
                     @click.native="rightSelectClick(item)">
                   </el-option>
                 </el-select>
+
+                <el-input v-else v-model="form.config.rightValue.value"/>
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
@@ -150,12 +143,12 @@
         </el-form-item>
 
         <el-form-item label="说明" prop="description">
-          <el-input type="textarea" v-model="add.form.description"></el-input>
+          <el-input type="textarea" v-model="form.description"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="add.dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save('add.form')">保 存</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveOrUpdate('addForm')">保 存</el-button>
       </div>
     </el-dialog>
 
@@ -228,29 +221,53 @@
             name: null,
           }
         },
-        add: {
-          dialogFormVisible: false,
-          form: {
-            id: null,
-            name: null,
-            config: {
-              leftValue: {
-                value: null,
-                valueName: null,
-                valueType: null,
-                type: null,
-              },
-              symbol: null,
-              rightValue: {
-                value: null,
-                valueName: null,
-                valueType: null,
-                type: null,
-              }
+        dialogFormVisible: false,
+        form: {
+          id: null,
+          name: null,
+          config: {
+            leftValue: {
+              value: undefined,
+              valueName: null,
+              valueType: null,
+              type: null,
             },
-            description: null,
+            symbol: null,
+            rightValue: {
+              value: undefined,
+              valueName: null,
+              valueType: null,
+              type: null,
+            }
           },
-          rules: {}
+          description: null,
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入条件名称', trigger: ['blur']},
+            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: ['blur']}
+          ],
+          config: {
+            leftValue: {
+              type: [
+                {required: true, message: '请选择类型', trigger: ['blur', 'change']},
+              ],
+              value: [
+                {required: true, message: '值不能为空', trigger: ['blur']},
+              ],
+            },
+            symbol: [
+              {required: true, message: '请选择运算符', trigger: ['blur', 'change']}
+            ],
+            rightValue: {
+              type: [
+                {required: true, message: '请选择类型', trigger: ['blur', 'change']},
+              ],
+              value: [
+                {required: true, message: '值不能为空', trigger: ['blur']},
+              ],
+            }
+          }
         },
         leftSelect: {
           loading: false,
@@ -273,20 +290,23 @@
     },
     methods: {
       addConditionForm() {
-        this.add.dialogFormVisible = true;
-        this.add.form = {
+        let ref = this.$refs['addForm'];
+        if (ref != null) {
+          ref.resetFields();
+        }
+        this.form = {
           id: null,
           name: null,
           config: {
             leftValue: {
-              value: null,
+              value: undefined,
               valueName: null,
               valueType: null,
               type: null,
             },
             symbol: null,
             rightValue: {
-              value: null,
+              value: undefined,
               valueName: null,
               valueType: null,
               type: null,
@@ -294,113 +314,74 @@
           },
           description: null,
         };
+        this.dialogFormVisible = true;
       },
       isRightTypeSelectView(valueType) {
-        if (this.add.form.config.leftValue.valueType === valueType) {
+        if (this.form.config.leftValue.valueType === valueType) {
           return true;
         }
         // 如果左值为集合时
-        if (this.add.form.config.leftValue.valueType === 'COLLECTION') {
-          if (this.add.form.config.symbol === null) {
+        if (this.form.config.leftValue.valueType === 'COLLECTION') {
+          if (this.form.config.symbol === null) {
             return true;
           }
           // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
-          return this.add.form.config.symbol === 'CONTAIN' || this.add.form.config.symbol === 'NOT_CONTAIN';
+          return this.form.config.symbol === 'CONTAIN' || this.form.config.symbol === 'NOT_CONTAIN';
         }
       },
       leftValueChange() {
         //左面发生改变，右边也改变
-        this.add.form.config.symbol = '';
-        this.add.form.config.rightValue.value = '';
-        this.add.form.config.rightValue.valueName = '';
-        this.add.form.config.rightValue.type = '';
+        this.form.config.symbol = '';
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
+        this.form.config.rightValue.type = '';
         this.rightSelect.options = [];
       },
       leftValueTypeChange() {
-        this.add.form.config.leftValue.value = '';
-        this.add.form.config.leftValue.valueName = '';
+        this.form.config.leftValue.value = undefined;
+        this.form.config.leftValue.valueName = '';
         this.leftSelect.options = [];
-        this.add.form.config.symbol = '';
+        this.form.config.symbol = '';
         //左面发生改变，右边也改变
-        this.add.form.config.rightValue.value = '';
-        this.add.form.config.rightValue.valueName = '';
-        this.add.form.config.rightValue.type = '';
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
+        this.form.config.rightValue.type = '';
         this.rightSelect.options = [];
       },
       rightValueTypeChange() {
-        this.add.form.config.rightValue.value = '';
-        this.add.form.config.rightValue.valueName = '';
+        this.form.config.rightValue.value = undefined;
+        this.form.config.rightValue.valueName = '';
         this.rightSelect.options = [];
       },
-      save(formName) {
+      saveOrUpdate(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if (this.add.form.id === null) {
-              this.$axios.post("/ruleEngine/condition/add", {
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "config": {
-                  "leftValue": {
-                    "value": this.add.form.config.leftValue.value,
-                    "valueType": this.add.form.config.leftValue.valueType,
-                    "type": this.add.form.config.leftValue.type > 1 ? 2 : this.add.form.config.leftValue.type,
-                  },
-                  "symbol": this.add.form.config.symbol,
-                  "rightValue": {
-                    "value": this.add.form.config.rightValue.value,
-                    "valueType": this.add.form.config.rightValue.valueType,
-                    "type": this.add.form.config.rightValue.type > 1 ? 2 : this.add.form.config.rightValue.type,
-                  }
+            this.$axios.post(this.form.id === null ? "/ruleEngine/condition/add" : "/ruleEngine/condition/update", {
+              "id": this.form.id,
+              "name": this.form.name,
+              "description": this.form.description,
+              "config": {
+                "leftValue": {
+                  "value": this.form.config.leftValue.value,
+                  "valueType": this.getValueType(this.form.config.leftValue.type, this.form.config.leftValue.valueType),
+                  "type": this.form.config.leftValue.type > 5 ? 2 : this.form.config.leftValue.type,
+                },
+                "symbol": this.form.config.symbol,
+                "rightValue": {
+                  "value": this.form.config.rightValue.value,
+                  "valueType": this.getValueType(this.form.config.rightValue.type, this.form.config.rightValue.valueType),
+                  "type": this.form.config.rightValue.type > 5 ? 2 : this.form.config.rightValue.type,
                 }
-              })
-                .then(res => {
-                  if (res) {
-                    this.$message({
-                      showClose: true,
-                      message: '添加成功',
-                      type: 'success'
-                    });
-                    this.list();
-                  }
-                  this.$refs[formName].resetFields();
-                  this.add.dialogFormVisible = false;
-                }).catch(function (error) {
-                console.log(error);
-              });
-            } else {
-              this.$axios.post("/ruleEngine/condition/update", {
-                "id": this.add.form.id,
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "config": {
-                  "leftValue": {
-                    "value": this.add.form.config.leftValue.value,
-                    "valueType": this.add.form.config.leftValue.valueType,
-                    "type": this.add.form.config.leftValue.type > 1 ? 2 : this.add.form.config.leftValue.type,
-                  },
-                  "symbol": this.add.form.config.symbol,
-                  "rightValue": {
-                    "value": this.add.form.config.rightValue.value,
-                    "valueType": this.add.form.config.rightValue.valueType,
-                    "type": this.add.form.config.rightValue.type > 1 ? 2 : this.add.form.config.rightValue.type,
-                  }
-                }
-              })
-                .then(res => {
-                  if (res) {
-                    this.$message({
-                      showClose: true,
-                      message: '更新成功',
-                      type: 'success'
-                    });
-                    this.list();
-                  }
-                  this.$refs[formName].resetFields();
-                  this.add.dialogFormVisible = false;
-                }).catch(function (error) {
-                console.log(error);
-              });
-            }
+              }
+            }).then(res => {
+              if (res) {
+                this.list();
+              }
+              this.$refs[formName].resetFields();
+              this.dialogFormVisible = false;
+            }).catch(function (error) {
+              console.log(error);
+            });
           } else {
             console.log('error submit!!');
             return false;
@@ -408,12 +389,12 @@
         });
       },
       rightSelectClick(item) {
-        this.add.form.config.rightValue.valueType = item.valueType;
-        this.add.form.config.rightValue.value = item.id;
+        this.form.config.rightValue.valueType = item.valueType;
+        this.form.config.rightValue.value = item.id;
       },
       leftSelectClick(item) {
-        this.add.form.config.leftValue.valueType = item.valueType;
-        this.add.form.config.leftValue.value = item.id;
+        this.form.config.leftValue.valueType = item.valueType;
+        this.form.config.leftValue.value = item.id;
       },
       reset(formName) {
         this.$refs[formName].resetFields();
@@ -432,9 +413,7 @@
             "pageSize": this.page.pageSize,
             "pageIndex": this.page.pageIndex
           },
-          "query": {
-            "name": this.search.form.name,
-          },
+          "query": this.search.form,
           "orders": [
             {
               "columnName": "id",
@@ -456,12 +435,8 @@
         if (query !== '') {
           this.leftSelect.loading = true;
           this.leftSelect.options = [];
-          let type = this.add.form.config.leftValue.type;
-          let url = "/ruleEngine/element/list";
-          if (type === 1) {
-            url = "/ruleEngine/variable/list";
-          }
-          this.$axios.post(url, {
+          let type = this.form.config.leftValue.type;
+          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
             "page": {
               "pageSize": 10,
               "pageIndex": 1
@@ -481,23 +456,20 @@
         } else {
           this.leftSelect.options = [];
         }
-      }, rightRemoteMethod(query) {
+      },
+      rightRemoteMethod(query) {
         if (query !== '') {
           this.rightSelect.loading = true;
           this.rightSelect.options = [];
-          let type = this.add.form.config.rightValue.type;
-          let url = "/ruleEngine/element/list";
-          if (type === 1) {
-            url = "/ruleEngine/variable/list";
-          }
-          this.$axios.post(url, {
+          let type = this.form.config.rightValue.type;
+          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
             "page": {
               "pageSize": 10,
               "pageIndex": 1
             },
             "query": {
               "name": query,
-              "valueType": this.add.form.config.leftValue.type === 5 ? null : this.add.form.config.leftValue.valueType
+              "valueType": this.form.config.leftValue.valueType === 'COLLECTION' ? null : this.form.config.leftValue.valueType
             },
             "orders": []
           }).then(res => {
@@ -511,56 +483,70 @@
         } else {
           this.rightSelect.options = [];
         }
-      }, edit(row) {
+      },
+      edit(row) {
         this.$axios.post("/ruleEngine/condition/get", {
           "id": row.id
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            this.add.form = da;
-            this.add.form.config.leftValue.type = this.getType(da.config.leftValue.type, da.config.leftValue.valueType);
-            this.add.form.config.rightValue.type = this.getType(da.config.rightValue.type, da.config.rightValue.valueType);
+            let ref = this.$refs['addForm'];
+            if (ref != null) {
+              ref.resetFields();
+            }
+            this.form = da;
+            this.form.config.leftValue.type = this.getType(da.config.leftValue.type, da.config.leftValue.valueType);
+            this.form.config.rightValue.type = this.getType(da.config.rightValue.type, da.config.rightValue.valueType);
 
-            this.add.dialogFormVisible = true;
+            this.dialogFormVisible = true;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      getType(type, valueType) {
-        if (type > 1) {
-          if (valueType === "COLLECTION") {
-            return 5;
-          } else if (valueType === "STRING") {
-            return 2;
-          } else if (valueType === "BOOLEAN") {
-            return 3;
-          } else if (valueType === "NUMBER") {
-            return 4;
-          }
-        }
-        return type;
-      }, deleteRow(row) {
+      deleteRow(row) {
         this.$axios.post("/ruleEngine/condition/delete", {
           "id": row.id
         }).then(res => {
           let da = res.data;
           if (da) {
-            this.$message({
-              showClose: true,
-              message: '删除成功',
-              type: 'success'
-            });
             this.list();
           }
         }).catch(function (error) {
           console.log(error);
         });
-      }
-    }, created() {
+      },
+      getValueType(type, valueType) {
+        if (type === 5) {
+          return "STRING";
+        } else if (type === 6) {
+          return "BOOLEAN";
+        } else if (type === 7) {
+          return "NUMBER";
+        } else if (type === 8) {
+          return "COLLECTION";
+        }
+        return valueType;
+      },
+      getType(type, valueType) {
+        if (type === 2) {
+          if (valueType === "COLLECTION") {
+            return 8;
+          } else if (valueType === "STRING") {
+            return 5;
+          } else if (valueType === "BOOLEAN") {
+            return 6;
+          } else if (valueType === "NUMBER") {
+            return 7;
+          }
+        }
+        return type;
+      },
+    },
+    created() {
       this.list();
       //增加对名称的监听事件
-      this.$watch('add.form.config.leftValue.valueType', (newVal, oldVal) => {
+      this.$watch('form.config.leftValue.valueType', (newVal, oldVal) => {
         if (newVal == null) {
           return;
         }
@@ -579,10 +565,10 @@
   }
 </script>
 <style>
-
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
 </style>
 <style scoped>
-  .conditionConfigItem {
-    margin-top: 16px;
-  }
+
 </style>

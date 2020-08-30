@@ -138,8 +138,7 @@
             {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
           ],
           valueType: [
-            {required: true, message: '请选择元素类型', trigger: 'blur'},
-            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+            {required: true, message: '请选择元素类型', trigger: ['blur', 'change']}
           ],
         }
       }

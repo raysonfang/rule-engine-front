@@ -63,7 +63,7 @@
           <el-col :span="4" style="margin-top: 26px">
             <el-form-item v-for="(pv,index) in form.function.paramValues" style="margin-top: 18px;"
                           :prop="'function.paramValues.' + index + '.type'"
-                          :rules="{ required: true, message: '类型不能为空', trigger: 'blur' }">
+                          :rules="{ required: true, message: '类型不能为空', trigger: ['blur', 'change'] }">
               <el-select v-model="pv.type" @change="leftValueTypeChange(pv)">
                 <el-option label="元素" :value="0"/>
                 <el-option label="变量" :value="1"/>
@@ -242,7 +242,7 @@
             ],
           },
           type: [
-            {required: true, message: '请选择变量类型', trigger: 'blur'}
+            {required: true, message: '请选择变量类型', trigger: ['blur', 'change']}
           ],
           value: [
             {required: true, message: '值不能为空', trigger: 'blur'}
