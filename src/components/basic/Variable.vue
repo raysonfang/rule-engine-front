@@ -287,7 +287,7 @@
         }
       },
       leftValueTypeChange(pv) {
-        pv.value = '';
+        pv.value = undefined;
         pv.valueName = '';
         pv.options = [];
       },
@@ -438,6 +438,10 @@
       getParamValues(paramValues) {
         return Array.from(paramValues)
           .map(item => ({
+            // 搜索用元素变量用
+            loading: true,
+            options: [],
+            // ...
             name: item.name,
             code: item.code,
             type: this.getType(item.type, item.valueType),
