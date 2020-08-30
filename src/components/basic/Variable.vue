@@ -16,6 +16,7 @@
 
     <el-dialog :title="form.id!==null?'更新变量':'新建变量'" :visible.sync="dialogFormVisible">
       <el-form ref="addForm" :rules="rules" :model="form" label-width="80px">
+
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name"/>
         </el-form-item>
@@ -50,8 +51,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="函数参数" v-if="form.function.paramValues.length!==0&&form.type===3&&form.value!=null"
-                      prop="function.paramValues">
+        <el-form-item label="函数参数" v-if="form.function.paramValues.length!==0&&form.type===3&&form.value!=null">
 
           <el-col :span="3" style="margin-top: 26px;">
             <el-form-item v-for="pv in form.function.paramValues"
@@ -242,7 +242,7 @@
             ],
           },
           type: [
-            {required: true, message: '请选择变量类型', trigger: ['blur', 'change']}
+            {required: true, message: '请选择变量类型', trigger: 'blur'}
           ],
           value: [
             {required: true, message: '值不能为空', trigger: 'blur'}
@@ -321,18 +321,23 @@
         this.form.value = item.id;
         this.form.function.paramValues = this.getParamValues(item.params);
       },
-      addVarForm() {
+      clearValidate() {
         let ref = this.$refs['addForm'];
         if (ref != null) {
-          ref.resetFields();
+          ref.clearValidate()
         }
+      },
+      addVarForm() {
+        this.clearValidate();
         this.form = {
           loading: false,
           options: [],
           id: null,
           name: null,
           type: null,
+          value: undefined,
           description: null,
+          valueType: null,
           function: {
             returnValueType: null,
             name: '',
@@ -407,6 +412,7 @@
         });
       },
       getVarInfo(id) {
+        this.clearValidate();
         this.form.id = id;
         // 查询到变量信息
         this.$axios.post("/ruleEngine/variable/get", {
@@ -414,10 +420,6 @@
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            let ref = this.$refs['addForm'];
-            if (ref != null) {
-              ref.resetFields();
-            }
             this.form.name = da.name;
             this.form.value = da.value;
             this.form.type = this.getType(da.type, da.valueType);

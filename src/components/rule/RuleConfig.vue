@@ -2,9 +2,9 @@
   <div id="ruleConfig">
 
     <el-steps :active="2" align-center>
-      <el-step title="规则定义" icon="el-icon-edit"></el-step>
-      <el-step title="规则定义" icon="el-icon-connection"></el-step>
-      <el-step title="规则预览" icon="el-icon-view" class="stepp"></el-step>
+      <el-step title="规则定义" icon="el-icon-edit"/>
+      <el-step title="规则定义" icon="el-icon-connection"/>
+      <el-step title="规则预览" icon="el-icon-view" class="stepp"/>
     </el-steps>
     <br>
     <br>
@@ -22,7 +22,7 @@
               <div slot="header" class="box-card-header">
                 <span>条件集</span>
                 <i class="el-icon-circle-plus-outline pointer" @click="addConditionGroup()"
-                   style="float: right; padding: 14px 10px;color: #5ba0f8;"></i>
+                   style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
               </div>
               <div>
                 <el-card v-for="cg in conditionGroup" class="box-card conditionGroupCard"
@@ -33,14 +33,14 @@
                          v-on:dragenter.native="handleDragEnterCG($event, cg, conditionGroup)"
                          v-on:dragend.native="handleDragEndCG($event)">
                   <div slot="header" class="box-card-header">
-                    <span><el-input v-model="cg.name" style="width: 200px;margin-left: -20px;"></el-input></span>
+                    <span><el-input v-model="cg.name" style="width: 200px;margin-left: -20px;"/></span>
                     <i class="el-icon-delete pointer" @click="deleteConditionGroup(cg)"
-                       style="float: right; padding: 14px 0;color: #5ba0f8;"></i>
+                       style="float: right; padding: 14px 0;color: #5ba0f8;"/>
                     <i class="el-icon-circle-plus-outline pointer" @click="addCondition(cg)"
-                       style="float: right; padding: 14px 10px;color: #5ba0f8;"></i>
+                       style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
                     <i class="el-icon-rank pointer" style="float: right; padding: 14px 4px;color: #5ba0f8;"
                        @mouseover="conditionGroupDraggable=true"
-                       @mouseleave="conditionGroupDraggable=false"></i>
+                       @mouseleave="conditionGroupDraggable=false"/>
                   </div>
 
                   <el-alert
@@ -79,7 +79,7 @@
                     <span style="color: #606266">   {{c.condition.config.rightValue.valueName}}</span>
 
                     <i class="el-alert__closebtn el-icon-close" style="color: rgb(91, 160, 248)"
-                       @click="removeCondition(cg.conditionSets,c.condition.id)"></i>
+                       @click="removeCondition(cg.conditionSets,c.condition.id)"/>
                   </el-alert>
                 </el-card>
               </div>
@@ -99,16 +99,12 @@
                 <el-form ref="actionForm" :model="action" :rules="actionRules">
                   <el-form-item prop="type" class="el-col-6">
                     <el-select v-model="action.type" placeholder="请选择数据类型" @change="actionTypeChange()">
-                      <el-option label="元素" :value="0"></el-option>
-                      <el-option label="变量" :value="1"></el-option>
-                      <el-option label="字符串" :value="2"
-                                 @click.native="action.valueType='STRING'"></el-option>
-                      <el-option label="布尔" :value="3"
-                                 @click.native="action.valueType='BOOLEAN'"></el-option>
-                      <el-option label="数值" :value="4"
-                                 @click.native="action.valueType='NUMBER'"></el-option>
-                      <el-option label="集合" :value="5"
-                                 @click.native="action.valueType='COLLECTION'"></el-option>
+                      <el-option label="元素" :value="0"/>
+                      <el-option label="变量" :value="1"/>
+                      <el-option label="字符串" :value="2" @click.native="action.valueType='STRING'"/>
+                      <el-option label="布尔" :value="3" @click.native="action.valueType='BOOLEAN'"/>
+                      <el-option label="数值" :value="4" @click.native="action.valueType='NUMBER'"/>
+                      <el-option label="集合" :value="5" @click.native="action.valueType='COLLECTION'"/>
                     </el-select>
                   </el-form-item>
 
@@ -119,8 +115,8 @@
                   <el-form-item prop="value" class="el-col-17">
                     <el-select v-if="action.type===3" v-model="action.value" prop="value"
                                placeholder="请选择数据 ">
-                      <el-option label="true" value="true"></el-option>
-                      <el-option label="false" value="false"></el-option>
+                      <el-option label="true" value="true"/>
+                      <el-option label="false" value="false"/>
                     </el-select>
 
                     <el-select prop="value"
@@ -143,10 +139,10 @@
 
                     <div v-else-if="action.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
-                                       :max="10000000000000" style="width: 193px"></el-input-number>
+                                       :max="10000000000000" style="width: 193px"/>
                     </div>
 
-                    <el-input v-else v-model="action.value" prop="value"></el-input>
+                    <el-input v-else v-model="action.value" prop="value"/>
 
                   </el-form-item>
 
@@ -168,23 +164,23 @@
                 <span>默认结果</span>
               </div>
               <div>
-                <el-switch v-model="enableDefaultAction" :active-value="0" :inactive-value="1"></el-switch>
+                <el-switch v-model="enableDefaultAction" :active-value="0" :inactive-value="1"/>
                 <br>
                 <br>
                 <el-form ref="defaultActionForm" :model="defaultAction" :rules="defaultActionRules">
                   <el-form-item prop="type" class="el-col-6">
                     <el-select v-model="defaultAction.type" placeholder="请选择数据类型"
                                @change="defaultActionTypeChange()">
-                      <el-option label="元素" :value="0"></el-option>
-                      <el-option label="变量" :value="1"></el-option>
+                      <el-option label="元素" :value="0"/>
+                      <el-option label="变量" :value="1"/>
                       <el-option label="字符串" :value="2"
-                                 @click.native="defaultAction.valueType='STRING'"></el-option>
+                                 @click.native="defaultAction.valueType='STRING'"/>
                       <el-option label="布尔" :value="3"
-                                 @click.native="defaultAction.valueType='BOOLEAN'"></el-option>
+                                 @click.native="defaultAction.valueType='BOOLEAN'"/>
                       <el-option label="数值" :value="4"
-                                 @click.native="defaultAction.valueType='NUMBER'"></el-option>
+                                 @click.native="defaultAction.valueType='NUMBER'"/>
                       <el-option label="集合" :value="5"
-                                 @click.native="defaultAction.valueType='COLLECTION'"></el-option>
+                                 @click.native="defaultAction.valueType='COLLECTION'"/>
                     </el-select>
                   </el-form-item>
                   <el-form-item class="el-col-1">
@@ -192,8 +188,8 @@
                   </el-form-item>
                   <el-form-item prop="value" class="el-col-17">
                     <el-select v-if="defaultAction.type===3" v-model="defaultAction.value">
-                      <el-option label="true" value="true"></el-option>
-                      <el-option label="false" value="false"></el-option>
+                      <el-option label="true" value="true"/>
+                      <el-option label="false" value="false"/>
                     </el-select>
 
                     <el-select
@@ -217,10 +213,10 @@
 
                     <div v-else-if="defaultAction.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
-                                       :max="10000000000000" style="width: 193px"></el-input-number>
+                                       :max="10000000000000" style="width: 193px"/>
                     </div>
 
-                    <el-input v-else v-model="defaultAction.value"></el-input>
+                    <el-input v-else v-model="defaultAction.value"/>
                   </el-form-item>
                 </el-form>
               </div>
@@ -247,7 +243,7 @@
           <div slot="header" class="box-card-header">
             <span>选择条件</span>
             <i class="el-icon-close pointer" @click="condition.dialogFormVisible=false "
-               style="float: right; padding: 14px 0;color: #5ba0f8;"></i>
+               style="float: right; padding: 14px 0;color: #5ba0f8;"/>
           </div>
           <div>
             <el-select
@@ -273,7 +269,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-backtop></el-backtop>
+    <el-backtop/>
   </div>
 </template>
 
@@ -360,11 +356,7 @@
           this.defaultAction.loading = true;
           this.defaultAction.options = [];
           let type = this.defaultAction.type;
-          let url = "/ruleEngine/element/list";
-          if (type === 1) {
-            url = "/ruleEngine/variable/list";
-          }
-          this.$axios.post(url, {
+          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
             "page": {
               "pageSize": 10,
               "pageIndex": 1
@@ -390,11 +382,7 @@
           this.action.loading = true;
           this.action.options = [];
           let type = this.action.type;
-          let url = "/ruleEngine/element/list";
-          if (type === 1) {
-            url = "/ruleEngine/variable/list";
-          }
-          this.$axios.post(url, {
+          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
             "page": {
               "pageSize": 10,
               "pageIndex": 1
@@ -467,7 +455,7 @@
           if (da) {
             this.$message({
               showClose: true,
-              message: '更新成功',
+              message: '保存成功',
               type: 'success'
             });
           }

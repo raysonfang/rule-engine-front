@@ -92,8 +92,8 @@
               <el-form-item prop="config.rightValue.type">
                 <el-select v-model="form.config.rightValue.type" placeholder="请选择数据类型"
                            @change="rightValueTypeChange()">
-                  <el-option label="元素" :value="0"/>
-                  <el-option label="变量" :value="1"/>
+                  <el-option v-if="form.config.leftValue.type!=null" label="元素" :value="0"/>
+                  <el-option v-if="form.config.leftValue.type!=null" label="变量" :value="1"/>
                   <el-option v-if="isRightTypeSelectView('STRING')" label="字符串" :value="5"/>
                   <el-option v-if="isRightTypeSelectView('BOOLEAN')" label="布尔" :value="6"/>
                   <el-option v-if="isRightTypeSelectView('NUMBER')" label="数值" :value="7"/>
@@ -250,18 +250,18 @@
           config: {
             leftValue: {
               type: [
-                {required: true, message: '请选择类型', trigger: ['blur', 'change']},
+                {required: true, message: '请选择类型', trigger: ['blur']},
               ],
               value: [
                 {required: true, message: '值不能为空', trigger: ['blur']},
               ],
             },
             symbol: [
-              {required: true, message: '请选择运算符', trigger: ['blur', 'change']}
+              {required: true, message: '请选择运算符', trigger: ['blur']}
             ],
             rightValue: {
               type: [
-                {required: true, message: '请选择类型', trigger: ['blur', 'change']},
+                {required: true, message: '请选择类型', trigger: ['blur']},
               ],
               value: [
                 {required: true, message: '值不能为空', trigger: ['blur']},
@@ -289,11 +289,14 @@
       }
     },
     methods: {
-      addConditionForm() {
+      clearValidate() {
         let ref = this.$refs['addForm'];
         if (ref != null) {
-          ref.resetFields();
+          ref.clearValidate()
         }
+      },
+      addConditionForm() {
+        this.clearValidate();
         this.form = {
           id: null,
           name: null,
@@ -317,6 +320,9 @@
         this.dialogFormVisible = true;
       },
       isRightTypeSelectView(valueType) {
+        if (this.form.config.leftValue.valueType === null) {
+          return false;
+        }
         if (this.form.config.leftValue.valueType === valueType) {
           return true;
         }
@@ -340,6 +346,10 @@
       leftValueTypeChange() {
         this.form.config.leftValue.value = undefined;
         this.form.config.leftValue.valueName = '';
+        // 如果是变量或者元素
+        if (this.form.config.leftValue.type === 1 || this.form.config.leftValue.type === 0) {
+          this.form.config.leftValue.valueType = null;
+        }
         this.leftSelect.options = [];
         this.form.config.symbol = '';
         //左面发生改变，右边也改变
@@ -485,15 +495,12 @@
         }
       },
       edit(row) {
+        this.clearValidate();
         this.$axios.post("/ruleEngine/condition/get", {
           "id": row.id
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            let ref = this.$refs['addForm'];
-            if (ref != null) {
-              ref.resetFields();
-            }
             this.form = da;
             this.form.config.leftValue.type = this.getType(da.config.leftValue.type, da.config.leftValue.valueType);
             this.form.config.rightValue.type = this.getType(da.config.rightValue.type, da.config.rightValue.valueType);

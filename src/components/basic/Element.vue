@@ -138,7 +138,7 @@
             {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
           ],
           valueType: [
-            {required: true, message: '请选择元素类型', trigger: ['blur', 'change']}
+            {required: true, message: '请选择元素类型', trigger: ['blur']}
           ],
         }
       }
@@ -197,6 +197,7 @@
         });
       },
       edit(row) {
+        this.clearValidate();
         this.$axios.post("/ruleEngine/element/get", {
           "id": row.id
         }).then(res => {
@@ -210,7 +211,14 @@
           console.log(error);
         });
       },
+      clearValidate() {
+        let ref = this.$refs['saveOrUpdateForm'];
+        if (ref != null) {
+          ref.clearValidate()
+        }
+      },
       addElementForm() {
+        this.clearValidate();
         this.form = {};
         this.dialogFormVisible = true;
       },
