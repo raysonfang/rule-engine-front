@@ -3,7 +3,7 @@
 
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
-        <el-input v-model="search.form.name"></el-input>
+        <el-input v-model="search.form.name"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
@@ -11,35 +11,35 @@
       </el-form-item>
     </el-form>
 
-    <el-dialog title="函数详情" :visible.sync="get.dialogFormVisible">
-      <el-form ref="get.form" :model="get.form" label-width="80px">
+    <el-dialog title="函数详情" :visible.sync="dialogFormVisible">
+      <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="名称">
-          <el-input v-model="get.form.name" :readonly="true"></el-input>
+          <el-input v-model="form.name" :readonly="true"/>
         </el-form-item>
         <el-form-item label="执行器">
-          <el-input v-model="get.form.executor" :readonly="true"></el-input>
+          <el-input v-model="form.executor" :readonly="true"/>
         </el-form-item>
 
         <el-form-item label="参数" style="margin-top: -8px;">
-          <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="get.form.paramsJson"
-                    :readonly="true" resize="none"></el-input>
+          <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="form.paramsJson"
+                    :readonly="true" resize="none"/>
         </el-form-item>
 
         <el-form-item label="返回类型">
-          <el-select :value="get.form.returnValueType" :readonly="true">
-            <el-option label="布尔" value="BOOLEAN"></el-option>
-            <el-option label="集合" value="COLLECTION"></el-option>
-            <el-option label="字符串" value="STRING"></el-option>
-            <el-option label="数值" value="NUMBER"></el-option>
+          <el-select :value="form.returnValueType" :readonly="true">
+            <el-option label="布尔" value="BOOLEAN"/>
+            <el-option label="集合" value="COLLECTION"/>
+            <el-option label="字符串" value="STRING"/>
+            <el-option label="数值" value="NUMBER"/>
           </el-select>
         </el-form-item>
 
         <el-form-item label="说明">
-          <el-input type="textarea" v-model="get.form.description" :readonly="true"></el-input>
+          <el-input type="textarea" v-model="form.description" :readonly="true"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="get.dialogFormVisible = false">关 闭</el-button>
+        <el-button @click="dialogFormVisible = false">关 闭</el-button>
       </div>
     </el-dialog>
 
@@ -107,15 +107,13 @@
             name: null
           }
         },
-        get: {
-          dialogFormVisible: false,
-          form: {
-            name: null,
-            returnValueType: null,
-            description: null,
-            executor: null,
-            paramsJson: null
-          }
+        dialogFormVisible: false,
+        form: {
+          name: null,
+          returnValueType: null,
+          description: null,
+          executor: null,
+          paramsJson: null
         },
         tableData: [],
         loading: false,
@@ -139,18 +137,18 @@
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            this.get.form.name = da.name;
-            this.get.form.returnValueType = da.returnValueType;
-            this.get.form.description = da.description;
-            this.get.form.executor = da.executor;
+            this.form = da;
+            this.form.paramsJson = JSON.stringify(da.params, null, 4);
 
-            this.get.form.paramsJson = JSON.stringify(da.params, null, 4);
-
-            this.get.dialogFormVisible = true;
+            this.dialogFormVisible = true;
           }
         }).catch(function (error) {
           console.log(error);
         });
+      },
+      reset(formName) {
+        this.$refs[formName].resetFields();
+        this.list();
       },
       list() {
         this.$axios.post("/ruleEngine/function/list", {
@@ -158,9 +156,7 @@
             "pageSize": this.page.pageSize,
             "pageIndex": this.page.pageIndex
           },
-          "query": {
-            "name": this.search.form.name
-          },
+          "query": this.search.form,
           "orders": [
             {
               "columnName": "id",

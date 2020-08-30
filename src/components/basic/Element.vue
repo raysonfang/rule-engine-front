@@ -1,12 +1,12 @@
-<template>
+<template xmlns="">
   <div id="app">
 
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
-        <el-input v-model="search.form.name"></el-input>
+        <el-input v-model="search.form.name"/>
       </el-form-item>
       <el-form-item label="Code" prop="code">
-        <el-input v-model="search.form.code"></el-input>
+        <el-input v-model="search.form.code"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="list()" icon="el-icon-search">搜索</el-button>
@@ -16,32 +16,33 @@
 
     <el-button type="primary" @click="addElementForm">新建元素</el-button>
 
-    <el-dialog :title="add.form.id===null?'新建元素':'更新元素'" :visible.sync="add.dialogFormVisible">
-      <el-form ref="add.form" :rules="add.rules" :model="add.form" label-width="70px">
+    <el-dialog :title="form.id===undefined?'新建元素':'更新元素'" :visible.sync="dialogFormVisible">
+      <el-form ref="saveOrUpdateForm" :rules="rules" :model="form" label-width="80px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="add.form.name"></el-input>
+          <el-input v-model="form.name"/>
         </el-form-item>
 
         <el-form-item label="Code" prop="code">
-          <el-input v-model="add.form.code" :disabled="add.form.id!==null"></el-input>
+          <el-input v-model="form.code" :disabled="form.id!==undefined"/>
         </el-form-item>
 
         <el-form-item label="数据类型" prop="valueType">
-          <el-select v-model="add.form.valueType" placeholder="请选择数据类型" :disabled="add.form.id!=null">
-            <el-option label="字符串" value="STRING"></el-option>
-            <el-option label="布尔" value="BOOLEAN"></el-option>
-            <el-option label="数值" value="NUMBER"></el-option>
-            <el-option label="集合" value="COLLECTION"></el-option>
+          <el-select v-model="form.valueType" placeholder="请选择数据类型"
+                     :disabled="form.id!==undefined">
+            <el-option label="字符串" value="STRING"/>
+            <el-option label="布尔" value="BOOLEAN"/>
+            <el-option label="数值" value="NUMBER"/>
+            <el-option label="集合" value="COLLECTION"/>
           </el-select>
         </el-form-item>
 
         <el-form-item label="说明" prop="description">
-          <el-input type="textarea" v-model="add.form.description"></el-input>
+          <el-input type="textarea" v-model="form.description"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="add.dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save('add.form')">保 存</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveOrUpdateClick('saveOrUpdateForm')">保 存</el-button>
       </div>
     </el-dialog>
 
@@ -119,76 +120,53 @@
             code: null,
           }
         },
-        add: {
-          dialogFormVisible: false,
-          form: {
-            id: null,
-            name: null,
-            code: null,
-            valueType: null,
-            description: null,
-          },
-          rules: {}
+        dialogFormVisible: false,
+        form: {
+          id: null,
+          name: null,
+          code: null,
+          valueType: null,
+          description: null,
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入元素名称', trigger: 'blur'},
+            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+          ],
+          code: [
+            {required: true, message: '请输入元素Code', trigger: 'blur'},
+            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+          ],
+          valueType: [
+            {required: true, message: '请选择元素类型', trigger: 'blur'},
+            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+          ],
         }
       }
     }, methods: {
-      save(formName) {
+      saveOrUpdateClick(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if (this.add.form.id === null) {
-              this.$axios.post("/ruleEngine/element/add", {
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "code": this.add.form.code,
-                "valueType": this.add.form.valueType,
-              })
-                .then(res => {
-                  if (res) {
-                    this.$message({
-                      showClose: true,
-                      message: '添加成功',
-                      type: 'success'
-                    });
-                    this.list();
-                  }
-                  this.$refs[formName].resetFields();
-                  this.add.dialogFormVisible = false;
-                }).catch(function (error) {
-                console.log(error);
-              });
-            } else {
-              this.$axios.post("/ruleEngine/element/update", {
-                "id": this.add.form.id,
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "code": this.add.form.code,
-                "valueType": this.add.form.valueType,
-              })
-                .then(res => {
-                  if (res) {
-                    this.$message({
-                      showClose: true,
-                      message: '更新成功',
-                      type: 'success'
-                    });
-                    this.list();
-                  }
-                  this.$refs[formName].resetFields();
-                  this.add.dialogFormVisible = false;
-                }).catch(function (error) {
-                console.log(error);
-              });
-            }
-
+            this.$axios.post(this.form.id === null ? "/ruleEngine/element/add" : "/ruleEngine/element/update", this.form)
+              .then(res => {
+                if (res) {
+                  this.list();
+                }
+                this.dialogFormVisible = false;
+              }).catch(function (error) {
+              console.log(error);
+            });
           } else {
             console.log('error submit!!');
             return false;
           }
         });
-      }, reset(formName) {
+      },
+      reset(formName) {
         this.$refs[formName].resetFields();
         this.list();
-      }, handleSizeChange(val) {
+      },
+      handleSizeChange(val) {
         this.page.pageSize = val;
         this.list();
       },
@@ -202,10 +180,7 @@
             "pageSize": this.page.pageSize,
             "pageIndex": this.page.pageIndex
           },
-          "query": {
-            "name": this.search.form.name,
-            "code": this.search.form.code,
-          },
+          "query": this.search.form,
           "orders": [
             {
               "columnName": "id",
@@ -228,22 +203,17 @@
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            this.add.form.id = row.id;
-            this.add.form.name = da.name;
-            this.add.form.code = da.code;
-            this.add.form.valueType = da.valueType;
-            this.add.form.description = da.description;
+            this.form = da;
 
-            this.add.dialogFormVisible = true;
+            this.dialogFormVisible = true;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
       addElementForm() {
-        this.add.form = {};
-        this.add.form.id = null;
-        this.add.dialogFormVisible = true;
+        this.form = {};
+        this.dialogFormVisible = true;
       },
       deleteRow(row) {
         this.$axios.post("/ruleEngine/element/delete", {
@@ -251,11 +221,6 @@
         }).then(res => {
           let da = res.data;
           if (da) {
-            this.$message({
-              showClose: true,
-              message: '删除成功',
-              type: 'success'
-            });
             this.list();
           }
         }).catch(function (error) {

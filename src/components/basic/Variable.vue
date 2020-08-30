@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
 
+    <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
-        <el-input v-model="search.form.name"></el-input>
+        <el-input v-model="search.form.name"/>
       </el-form-item>
 
       <el-form-item>
@@ -14,39 +14,34 @@
 
     <el-button type="primary" @click="addVarForm()">新建变量</el-button>
 
-    <el-dialog :title="add.form.id!==null?'更新变量':'新建变量'" :visible.sync="add.dialogFormVisible">
-      <el-form ref="addForm" :rules="add.rules" :model="add.form" label-width="70px">
+    <el-dialog :title="form.id!==null?'更新变量':'新建变量'" :visible.sync="dialogFormVisible">
+      <el-form ref="addForm" :rules="rules" :model="form" label-width="80px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="add.form.name"></el-input>
+          <el-input v-model="form.name"/>
         </el-form-item>
 
-        <el-form-item label="数据类型" prop="valueType">
-          <el-select v-model="add.form.type" placeholder="请选择数据类型"
-                     @change="typeChange()" :disabled="add.form.id!=null">
-            <el-option label="函数" :value="6"></el-option>
-            <el-option label="字符串" :value="2"
-                       @click.native="add.form.valueType='STRING'"></el-option>
-            <el-option label="布尔" :value="3"
-                       @click.native="add.form.valueType='BOOLEAN'"></el-option>
-            <el-option label="数值" :value="4"
-                       @click.native="add.form.valueType='NUMBER'"></el-option>
-            <el-option label="集合" :value="5"
-                       @click.native="add.form.valueType='COLLECTION'"></el-option>
+        <el-form-item label="数据类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择数据类型" @change="typeChange()" :disabled="form.id!=null">
+            <el-option label="函数" :value="3"/>
+            <el-option label="字符串" :value="5"/>
+            <el-option label="布尔" :value="6"/>
+            <el-option label="数值" :value="7"/>
+            <el-option label="集合" :value="8"/>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="函数名称" prop="valueType" v-if="add.form.type===6">
+        <el-form-item label="函数名称" prop="function.name" v-if="form.type===3">
           <el-select
-            :disabled="add.form.id!=null"
-            v-model="add.form.function.name"
+            :disabled="form.id!=null"
+            v-model="form.function.name"
             filterable
             remote
             reserve-keyword
             placeholder="请搜索函数名称"
             :remote-method="remoteMethod"
-            :loading="add.form.loading">
+            :loading="form.loading">
             <el-option
-              v-for="item in add.form.options"
+              v-for="item in form.options"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -55,45 +50,43 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="函数参数"
-                      v-if="add.form.function.paramValues.length!==0&&add.form.type===6&&add.form.value!=null">
+        <el-form-item label="函数参数" v-if="form.function.paramValues.length!==0&&form.type===3&&form.value!=null"
+                      prop="function.paramValues">
 
-          <el-col :span="3" style="margin-top: 20px;">
-            <el-form-item v-for="pv in add.form.function.paramValues"
-                          style="text-align: right;margin-right:20px;margin-top: 7px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+          <el-col :span="3" style="margin-top: 26px;">
+            <el-form-item v-for="pv in form.function.paramValues"
+                          style="text-align: right;margin-right:20px;margin-top: 19px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
               {{pv.name!==null?pv.name:pv.code}}
             </el-form-item>
           </el-col>
 
-          <el-col :span="4" style="margin-top: 20px">
-
-            <el-form-item v-for="pv in add.form.function.paramValues" style="margin-top: 6px;">
+          <el-col :span="4" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in form.function.paramValues" style="margin-top: 18px;"
+                          :prop="'function.paramValues.' + index + '.type'"
+                          :rules="{ required: true, message: '类型不能为空', trigger: 'blur' }">
               <el-select v-model="pv.type" @change="leftValueTypeChange(pv)">
-                <el-option label="元素" :value="0"></el-option>
-                <el-option label="变量" :value="1"></el-option>
-                <el-option label="字符串" :value="2"
-                           @click.native="pv.valueType='STRING'" v-if="pv.valueType==='STRING'"></el-option>
-                <el-option label="布尔" :value="3"
-                           @click.native="pv.valueType='BOOLEAN'" v-if="pv.valueType==='BOOLEAN'"></el-option>
-                <el-option label="数值" :value="4"
-                           @click.native="pv.valueType='NUMBER'" v-if="pv.valueType==='NUMBER'"></el-option>
-                <el-option label="集合" :value="5"
-                           @click.native="pv.valueType='COLLECTION'" v-if="pv.valueType==='COLLECTION'"></el-option>
+                <el-option label="元素" :value="0"/>
+                <el-option label="变量" :value="1"/>
+                <el-option label="字符串" :value="5" v-if="pv.valueType==='STRING'"/>
+                <el-option label="布尔" :value="6" v-else-if="pv.valueType==='BOOLEAN'"/>
+                <el-option label="数值" :value="7" v-else-if="pv.valueType==='NUMBER'"/>
+                <el-option label="集合" :value="8" v-else-if="pv.valueType==='COLLECTION'"/>
               </el-select>
             </el-form-item>
           </el-col>
+
           <el-col :span="1"> &nbsp;</el-col>
-          <el-col :span="13" style="margin-top: 20px">
-            <el-form-item v-for="pv in add.form.function.paramValues" style="margin-top: 6px;">
 
-              <el-select v-if="pv.type===3" v-model="pv.value" placeholder="请选择数据 ">
-                <el-option label="true" value="true"></el-option>
-                <el-option label="false" value="false"></el-option>
+          <el-col :span="13" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in form.function.paramValues" style="margin-top: 18px;"
+                          :prop="'function.paramValues.' + index + '.value'"
+                          :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
+              <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据 ">
+                <el-option label="true" value="true"/>
+                <el-option label="false" value="false"/>
               </el-select>
-
-              <el-input-number v-else-if="pv.type===4" v-model="pv.value" :controls="false"
-                               :max="10000000000000" style="width: 193px;"></el-input-number>
-
+              <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
+                               :max="10000000000000" style="width: 193px;"/>
               <el-select
                 v-else-if="pv.type===1||pv.type===0"
                 v-model="pv.valueName"
@@ -110,9 +103,7 @@
                   @click.native="leftSelectClick(pv,item)">
                 </el-option>
               </el-select>
-
-              <el-input v-else v-model="pv.value"></el-input>
-
+              <el-input v-else v-model="pv.value"/>
             </el-form-item>
           </el-col>
           <el-col :span="3">
@@ -120,30 +111,30 @@
           </el-col>
         </el-form-item>
 
-        <el-form-item label="变量值" v-if="add.form.type!==6" prop="value">
-
-          <el-input-number v-if="add.form.valueType==='NUMBER'" v-model="add.form.value" :controls="false"
-                           :max="10000000000000" style="width: 193px"></el-input-number>
-
-          <el-select v-else-if="add.form.valueType==='BOOLEAN'" v-model="add.form.value">
-            <el-option label="true" value="true"></el-option>
-            <el-option label="false" value="false"></el-option>
+        <el-form-item label="变量值" v-if="form.type!==3" prop="value">
+          <el-input-number v-if="form.type===7" v-model="form.value" :controls="false"
+                           :max="10000000000000" style="width: 193px"/>
+          <el-select v-else-if="form.type===6" v-model="form.value">
+            <el-option label="true" value="true"/>
+            <el-option label="false" value="false"/>
           </el-select>
 
-          <el-input type="textarea" v-else-if="add.form.valueType==='COLLECTION'" v-model="add.form.value"></el-input>
+          <el-input type="textarea" v-else-if="form.type===8" v-model="form.value"/>
 
-          <el-input v-else v-model="add.form.value"></el-input>
+          <el-input v-else v-model="form.value"/>
 
         </el-form-item>
 
         <el-form-item label="说明" prop="description">
-          <el-input type="textarea" v-model="add.form.description"></el-input>
+          <el-input type="textarea" v-model="form.description"/>
         </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
-        <el-button @click="add.dialogFormVisible = false">取 消</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="saveOrUpdate('addForm')">保 存</el-button>
       </div>
+
     </el-dialog>
 
     <el-table
@@ -224,24 +215,38 @@
             name: null,
           }
         },
-        add: {
-          dialogFormVisible: false,
-          form: {
-            loading: false,
-            options: [],
-            id: null,
+        dialogFormVisible: false,
+        form: {
+          loading: false,
+          options: [],
+          id: null,
+          name: '',
+          value: '',
+          type: null,
+          valueType: null,
+          description: null,
+          function: {
+            returnValueType: null,
             name: '',
-            value: '',
-            type: null,
-            valueType: null,
-            description: null,
-            function: {
-              returnValueType: null,
-              name: '',
-              paramValues: []
-            }
+            paramValues: []
+          }
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入变量名称', trigger: 'blur'},
+            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+          ],
+          function: {
+            name: [
+              {required: true, message: '请输入函数名称', trigger: 'blur'}
+            ],
           },
-          rules: {}
+          type: [
+            {required: true, message: '请选择变量类型', trigger: 'blur'}
+          ],
+          value: [
+            {required: true, message: '值不能为空', trigger: 'blur'}
+          ]
         }
       }
     }, methods: {
@@ -251,27 +256,22 @@
         this.options = [];
       },
       typeChange() {
-        this.add.form.options = [];
-        this.add.form.value = undefined;
-        this.add.form.valueName = '';
+        this.form.options = [];
+        this.form.value = undefined;
+        this.form.valueName = '';
       },
       leftRemoteMethod(query, pv) {
         if (query !== '') {
           pv.loading = true;
           pv.options = [];
-          let type = pv.type;
-          let url = "/ruleEngine/element/list";
-          if (type === 1) {
-            url = "/ruleEngine/variable/list";
-          }
-          this.$axios.post(url, {
+          this.$axios.post(pv.type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
             "page": {
               "pageSize": 10,
               "pageIndex": 1
             },
             "query": {
               "name": query,
-              "valueType": pv.type === 5 ? null : pv.valueType
+              "valueType": pv.valueType === 'COLLECTION' ? null : pv.valueType
             },
             "orders": []
           }).then(res => {
@@ -293,8 +293,8 @@
       },
       remoteMethod(query) {
         if (query !== '') {
-          this.add.form.loading = true;
-          this.add.form.options = [];
+          this.form.loading = true;
+          this.form.options = [];
           this.$axios.post("/ruleEngine/function/list", {
             "page": {
               "pageSize": 10,
@@ -306,42 +306,32 @@
             "orders": []
           }).then(res => {
             if (res.data != null) {
-              this.add.form.options = res.data.rows;
+              this.form.options = res.data.rows;
             }
-            this.add.form.loading = false;
+            this.form.loading = false;
           }).catch(function (error) {
             console.log(error);
           });
         } else {
-          this.add.form.options = [];
+          this.form.options = [];
         }
       },
       selectClick(item) {
-        this.add.form.valueType = item.returnValueType;
-        this.add.form.value = item.id;
-        this.add.form.function.paramValues = Array.from(item.params)
-          .map(m => ({
-            name: m.name,
-            code: m.code,
-            type: this.getTypeOld(m.type, m.valueType),
-            value: m.value,
-            valueName: m.valueName,
-            valueType: m.valueType,
-            loading: false,
-            options: [],
-          }));
-
+        this.form.valueType = item.returnValueType;
+        this.form.value = item.id;
+        this.form.function.paramValues = this.getParamValues(item.params);
       },
       addVarForm() {
-        this.add.dialogFormVisible = true;
-        this.add.form = {
+        let ref = this.$refs['addForm'];
+        if (ref != null) {
+          ref.resetFields();
+        }
+        this.form = {
           loading: false,
           options: [],
           id: null,
-          name: '',
-          value: '',
+          name: null,
           type: null,
-          valueType: null,
           description: null,
           function: {
             returnValueType: null,
@@ -349,80 +339,42 @@
             paramValues: []
           }
         };
+        this.dialogFormVisible = true;
       },
       saveOrUpdate(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if (this.add.form.id != null) {
-              this.$axios.post("/ruleEngine/variable/update", {
-                "id": this.add.form.id,
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "value": this.add.form.value,
-                "valueType": this.add.form.valueType,
-                "type": this.add.form.type === 6 ? 3 : 2,
-                "paramValues": Array.from(this.add.form.function.paramValues).map(m => ({
-                  "code": m.code,
-                  "name": m.name,
-                  "type": m.type > 1 ? 2 : m.type,
-                  "value": m.value,
-                  "valueType": m.valueType,
-                  "valueName": m.valueName,
-                }))
-              }).then(res => {
-                if (res) {
-                  this.$message({
-                    showClose: true,
-                    message: '更新成功',
-                    type: 'success'
-                  });
-                  this.list();
-                  this.add.dialogFormVisible = false;
-                  this.$refs[formName].resetFields();
-                }
-              }).catch(function (error) {
-                console.log(error);
-              });
-            } else {
-              this.$axios.post("/ruleEngine/variable/add", {
-                "name": this.add.form.name,
-                "description": this.add.form.description,
-                "value": this.add.form.value,
-                "valueType": this.add.form.valueType,
-                "type": this.add.form.type === 6 ? 3 : 2,
-                "paramValues": Array.from(this.add.form.function.paramValues).map(m => ({
-                  "code": m.code,
-                  "name": m.name,
-                  "type": m.type > 1 ? 2 : m.type,
-                  "value": m.value,
-                  "valueType": m.valueType,
-                  "valueName": m.valueName,
-                }))
-              }).then(res => {
-                if (res) {
-                  this.$message({
-                    showClose: true,
-                    message: '添加成功',
-                    type: 'success'
-                  });
-                  this.list();
-                  this.add.dialogFormVisible = false;
-                  this.$refs[formName].resetFields();
-                }
-              }).catch(function (error) {
-                console.log(error);
-              });
-            }
-          } else {
-            console.log('error submit!!');
-            return false;
+            this.$axios.post(this.form.id != null ? "/ruleEngine/variable/update" : "/ruleEngine/variable/add", {
+              "id": this.form.id,
+              "name": this.form.name,
+              "description": this.form.description,
+              "value": this.form.value,
+              "valueType": this.getValueType(this.form.type, this.form.valueType),
+              "type": this.form.type === 3 ? 3 : 2,
+              "paramValues": Array.from(this.form.function.paramValues).map(m => ({
+                "code": m.code,
+                "name": m.name,
+                "type": m.type >= 5 ? 2 : m.type,
+                "value": m.value,
+                "valueType": this.getValueType(m.type, m.valueType),
+                "valueName": m.valueName,
+              }))
+            }).then(res => {
+              if (res) {
+                this.list();
+                this.dialogFormVisible = false;
+              }
+            }).catch(function (error) {
+              console.log(error);
+            });
           }
         });
       },
       reset(formName) {
         this.$refs[formName].resetFields();
         this.list();
-      }, handleSizeChange(val) {
+      },
+      handleSizeChange(val) {
         this.page.pageSize = val;
         this.list();
       },
@@ -436,9 +388,7 @@
             "pageSize": this.page.pageSize,
             "pageIndex": this.page.pageIndex
           },
-          "query": {
-            "name": this.search.form.name,
-          },
+          "query": this.search.form,
           "orders": [
             {
               "columnName": "id",
@@ -457,65 +407,65 @@
         });
       },
       getVarInfo(id) {
-        this.add.form.id = id;
+        this.form.id = id;
         // 查询到变量信息
         this.$axios.post("/ruleEngine/variable/get", {
           "id": id
         }).then(res => {
           let da = res.data;
           if (da != null) {
-            this.add.form.name = da.name;
-            this.add.form.value = da.value;
-            this.add.form.type = this.getType(da.type, da.valueType);
-            this.add.form.valueType = da.valueType;
-            this.add.form.description = da.description;
-            if (da.function != null) {
-              this.add.form.function.paramValues = Array.from(da.function.paramValues)
-                .map(item => ({
-                  name: item.name,
-                  code: item.code,
-                  type: this.getTypeOld(item.type, item.valueType),
-                  value: item.value,
-                  valueName: item.valueName,
-                  valueType: item.valueType,
-                  loading: false,
-                  options: [],
-                }));
-              this.add.form.function.name = da.function.name;
+            let ref = this.$refs['addForm'];
+            if (ref != null) {
+              ref.resetFields();
             }
-            this.add.dialogFormVisible = true;
+            this.form.name = da.name;
+            this.form.value = da.value;
+            this.form.type = this.getType(da.type, da.valueType);
+            this.form.valueType = da.valueType;
+            this.form.description = da.description;
+            if (da.function != null) {
+              this.form.function.paramValues = this.getParamValues(da.function.paramValues);
+              this.form.function.name = da.function.name;
+            }
+            this.dialogFormVisible = true;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      getType(type, valueType) {
-        if (type === 3) {
-          return 6;
-        }
-        if (type > 1) {
-          if (valueType === "COLLECTION") {
-            return 5;
-          } else if (valueType === "STRING") {
-            return 2;
-          } else if (valueType === "BOOLEAN") {
-            return 3;
-          } else if (valueType === "NUMBER") {
-            return 4;
-          }
-        }
-        return type;
+      getParamValues(paramValues) {
+        return Array.from(paramValues)
+          .map(item => ({
+            name: item.name,
+            code: item.code,
+            type: this.getType(item.type, item.valueType),
+            value: item.value,
+            valueName: item.valueName,
+            valueType: item.valueType,
+          }));
       },
-      getTypeOld(type, valueType) {
-        if (type > 1) {
+      getValueType(type, valueType) {
+        if (type === 5) {
+          return "STRING";
+        } else if (type === 6) {
+          return "BOOLEAN";
+        } else if (type === 7) {
+          return "NUMBER";
+        } else if (type === 8) {
+          return "COLLECTION";
+        }
+        return valueType;
+      },
+      getType(type, valueType) {
+        if (type === 2) {
           if (valueType === "COLLECTION") {
-            return 5;
+            return 8;
           } else if (valueType === "STRING") {
-            return 2;
+            return 5;
           } else if (valueType === "BOOLEAN") {
-            return 3;
+            return 6;
           } else if (valueType === "NUMBER") {
-            return 4;
+            return 7;
           }
         }
         return type;
@@ -526,11 +476,6 @@
         }).then(res => {
           let da = res.data;
           if (da) {
-            this.$message({
-              showClose: true,
-              message: '删除成功',
-              type: 'success'
-            });
             this.list();
           }
         }).catch(function (error) {
