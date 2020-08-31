@@ -14,7 +14,7 @@
 
     <el-button type="primary" @click="addVarForm()">新建变量</el-button>
 
-    <el-dialog :title="form.id!==null?'更新变量':'新建变量'" :visible.sync="dialogFormVisible">
+    <el-dialog :title="form.id!==null?'更新变量':'新建变量'" :visible.sync="dialogFormVisible" width="700px">
       <el-form ref="addForm" :rules="rules" :model="form" label-width="80px">
 
         <el-form-item label="名称" prop="name">
@@ -54,7 +54,7 @@
         <el-form-item label="函数参数" v-if="form.function.paramValues.length!==0&&form.type===3&&form.value!=null">
 
           <el-col :span="3" style="margin-top: 26px;">
-            <el-form-item v-for="pv in form.function.paramValues"
+            <el-form-item v-for="pv in form.function.paramValues" :key="pv.code"
                           style="text-align: right;margin-right:20px;margin-top: 19px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
               {{pv.name!==null?pv.name:pv.code}}
             </el-form-item>
@@ -62,6 +62,7 @@
 
           <el-col :span="4" style="margin-top: 26px">
             <el-form-item v-for="(pv,index) in form.function.paramValues" style="margin-top: 18px;"
+                          :key="pv.code"
                           :prop="'function.paramValues.' + index + '.type'"
                           :rules="{ required: true, message: '类型不能为空', trigger: ['blur', 'change'] }">
               <el-select v-model="pv.type" @change="leftValueTypeChange(pv)">
@@ -79,6 +80,7 @@
 
           <el-col :span="13" style="margin-top: 26px">
             <el-form-item v-for="(pv,index) in form.function.paramValues" style="margin-top: 18px;"
+                          :key="pv.code"
                           :prop="'function.paramValues.' + index + '.value'"
                           :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
               <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据 ">

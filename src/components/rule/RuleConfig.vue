@@ -25,7 +25,7 @@
                    style="float: right; padding: 14px 10px;color: #5ba0f8;"/>
               </div>
               <div>
-                <el-card v-for="cg in conditionGroup" class="box-card conditionGroupCard"
+                <el-card v-for="cg in conditionGroup" class="box-card conditionGroupCard" :key="cg.id"
                          :body-style="{ padding: '6px 6px 0px 6px' }"
                          :draggable="conditionGroupDraggable"
                          v-on:dragstart.native="handleDragStartCG($event, cg)"
@@ -47,6 +47,7 @@
                     style="padding: 6px 0 8.5px 0"
                     :id="c.id" class="item"
                     v-for="c in cg.conditionSets"
+                    :key="c.id"
                     :closable="false"
 
                     draggable="true"

@@ -74,11 +74,6 @@ export default new Router({
           component: SystemSetting
         },
       ]
-    },
-    {
-      path: '/ruleConfig',
-      name: 'RuleConfig',
-      component: RuleConfig
-    },
+    }
   ]
 })

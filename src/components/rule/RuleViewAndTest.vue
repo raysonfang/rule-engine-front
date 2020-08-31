@@ -35,7 +35,7 @@
                     style="padding-bottom: 0"
                     color="#afd792"
                     :size="cgi===0?'large':'normal'"
-                    v-for="(cg, cgi) in conditionGroup">
+                    v-for="(cg, cgi) in conditionGroup" :key="cg.id">
                     <span style="color: #606266;font-size: 14px;" v-if="0===cgi">如果</span>
                     <span style="color: #606266;font-size: 14px;" v-else>或者</span>
                     <div v-for="(c,ci) in cg.conditionSets" style="margin-left: 20px;">
@@ -142,7 +142,7 @@
                    v-if="request.param.length===0">
                 无入参
               </div>
-              <el-form-item v-else style="margin-top: -18px;" v-for="param in request.param">
+              <el-form-item v-else style="margin-top: -18px;" v-for="param in request.param" :key="param.code">
                 {{param.name}}
                 <div v-if="param.valueType==='NUMBER'">
                   <el-input-number v-model="param.value" :controls="false"

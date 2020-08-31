@@ -11,7 +11,7 @@
       </el-form-item>
     </el-form>
 
-    <el-dialog title="函数详情" :visible.sync="dialogFormVisible">
+    <el-dialog title="函数详情" :visible.sync="dialogFormVisible" width="700px">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="名称">
           <el-input v-model="form.name" :readonly="true"/>
