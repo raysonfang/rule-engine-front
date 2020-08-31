@@ -2,17 +2,17 @@
   <div id="app">
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="75px">
       <el-form-item label="规则名称" prop="name">
-        <el-input v-model="search.form.name"></el-input>
+        <el-input v-model="search.form.name"/>
       </el-form-item>
       <el-form-item label="规则Code" prop="code">
-        <el-input v-model="search.form.code"></el-input>
+        <el-input v-model="search.form.code"/>
       </el-form-item>
       <el-form-item label="规则状态">
         <el-select v-model="search.form.status"
                    placeholder="请选择数据 ">
-          <el-option label="全部" :value="null"></el-option>
-          <el-option label="编辑中" value="0"></el-option>
-          <el-option label="可执行" value="1"></el-option>
+          <el-option label="全部" :value="null"/>
+          <el-option label="编辑中" value="0"/>
+          <el-option label="可执行" value="1"/>
         </el-select>
       </el-form-item>
 

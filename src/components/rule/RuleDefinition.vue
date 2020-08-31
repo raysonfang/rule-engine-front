@@ -1,9 +1,9 @@
 <template>
   <div id="ruleDefinition">
     <el-steps :active="1" align-center>
-      <el-step title="规则定义" icon="el-icon-edit"></el-step>
-      <el-step title="规则定义" icon="el-icon-connection" class="stepp"></el-step>
-      <el-step title="规则预览" icon="el-icon-view" class="stepp"></el-step>
+      <el-step title="规则定义" icon="el-icon-edit"/>
+      <el-step title="规则定义" icon="el-icon-connection" class="stepp"/>
+      <el-step title="规则预览" icon="el-icon-view" class="stepp"/>
     </el-steps>
     <br>
     <br>
@@ -20,13 +20,13 @@
           <div>
             <el-form ref="form" :model="form" :rules="rules" label-width="60px">
               <el-form-item label="名称" prop="name">
-                <el-input v-model="form.name"></el-input>
+                <el-input v-model="form.name"/>
               </el-form-item>
               <el-form-item label="Code" prop="code">
-                <el-input v-model="form.code" :disabled="form.id!==undefined"></el-input>
+                <el-input v-model="form.code" :disabled="form.id!==undefined"/>
               </el-form-item>
               <el-form-item label="说明" prop="description">
-                <el-input type="textarea" :autosize="{ minRows: 5}" v-model="form.description"></el-input>
+                <el-input type="textarea" :autosize="{ minRows: 5}" v-model="form.description"/>
               </el-form-item>
             </el-form>
           </div>
