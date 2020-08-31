@@ -3,9 +3,9 @@
     <el-container>
       <el-header>
         <el-row>
-          <el-col :span="2" >
+          <el-col :span="2">
             <div class="grid-content bg-purple">
-              <img src="../assets/logo4.png" class="logo"/>
+              <img src="../assets/logo4.png" class="logo" alt=""/>
             </div>
           </el-col>
           <el-col :span="19">
@@ -17,7 +17,7 @@
             <div class="grid-content bg-purple user">
               <el-dropdown @command="rightHandleCommand" trigger="click">
           <span class="el-dropdown-link username pointer" style="float: right">
-            {{username}}&nbsp;<i class="el-icon-arrow-down"></i>
+            {{username}}&nbsp;<i class="el-icon-arrow-down"/>
           </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="userInfo">个人信息</el-dropdown-item>
@@ -28,7 +28,7 @@
           </el-col>
           <el-col :span="1">
             <div class="grid-content bg-purple">
-              <img :src="avatar" class="avatar"/></div>
+              <img :src="avatar" class="avatar" alt=""/></div>
           </el-col>
         </el-row>
       </el-header>
@@ -41,13 +41,13 @@
             @close="handleClose">
 
             <el-menu-item index="/home">
-              <i class="el-icon-s-home"></i>
+              <i class="el-icon-s-home"/>
               <span>首页</span>
             </el-menu-item>
 
             <el-submenu index="1">
               <template slot="title">
-                <i class="el-icon-menu"></i>
+                <i class="el-icon-menu"/>
                 <span>基础组件</span>
               </template>
               <el-menu-item-group>
@@ -58,15 +58,21 @@
               </el-menu-item-group>
             </el-submenu>
 
-            <el-menu-item index="/rule">
-              <i class="el-icon-s-marketing"></i>
-              <span>规则</span>
-            </el-menu-item>
-
+            <el-submenu index="2">
+              <template slot="title">
+                <i class="el-icon-s-marketing"/>
+                <span>功能</span>
+              </template>
+              <el-menu-item-group>
+                <el-menu-item index="/rule">规则</el-menu-item>
+                <el-menu-item index="/decisionTree">决策树</el-menu-item>
+                <el-menu-item index="/scoreCard">评分卡</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
 
             <el-submenu index="3">
               <template slot="title">
-                <i class="el-icon-s-tools"></i>
+                <i class="el-icon-s-tools"/>
                 <span>设置</span>
               </template>
               <el-menu-item-group>

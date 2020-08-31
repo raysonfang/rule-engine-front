@@ -15,6 +15,10 @@ import RuleDefinition from '@/components/rule/RuleDefinition.vue'
 
 import SystemSetting from '@/components/setting/SystemSetting.vue'
 
+import ScoreCard from '@/components/score/ScoreCard.vue'
+
+import DecisionTree from '@/components/decision/tree/DecisionTree'
+
 Vue.use(Router);
 
 export default new Router({
@@ -68,10 +72,21 @@ export default new Router({
           path: '/ruleDefinition',
           name: 'RuleDefinition',
           component: RuleDefinition
-        }, {
+        },
+        {
           path: '/systemSetting',
           name: 'SystemSetting',
           component: SystemSetting
+        },
+        {
+          path: '/scoreCard',
+          name: 'ScoreCard',
+          component: ScoreCard
+        },
+        {
+          path: '/decisionTree',
+          name: 'DecisionTree',
+          component: DecisionTree
         },
       ]
     }
