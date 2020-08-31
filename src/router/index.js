@@ -3,6 +3,9 @@ import Router from 'vue-router'
 import Index from '@/components/Index'
 import Home from '@/components/Home'
 
+import Login from '@/components/Login.vue'
+import Page500 from '@/components/500.vue'
+
 import Condition from '@/components/basic/Condition'
 import Element from '@/components/basic/Element.vue'
 import Function from '@/components/basic/Function.vue'
@@ -19,10 +22,25 @@ import ScoreCard from '@/components/score/ScoreCard.vue'
 
 import DecisionTree from '@/components/decision/tree/DecisionTree'
 
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+};
+
 Vue.use(Router);
 
 export default new Router({
   routes: [
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login,
+    },
+    {
+      path: '/500',
+      name: 'Page500',
+      component: Page500,
+    },
     {
       path: '/',
       name: 'Index',

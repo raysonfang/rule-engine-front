@@ -24,26 +24,24 @@ Vue.prototype.$axios = axios;
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = requestBaseURL;
 
-//请求之前
+// 请求之前
 axios.interceptors.request.use(config => {
-  console.log("请求数据:", config);
   return config;
 }, error => {
-  //请求错误
+  // 请求错误
   return Promise.reject(error);
 });
 //服务器响应
 axios.interceptors.response.use(response => {
-  console.log("返回数据:", response);
   let data = response.data;
   let code = data.code;
   let message = data.message;
   if (code === 200) {
     return data;
   } else if (code === 4009) {
-    //router.push({path: '/login'});
+    router.push({path: '/login'});
     ElementUI.Message({
-      type: 'error',
+      type: 'warning',
       message: '请先登陆!'
     });
   } else {
@@ -54,13 +52,7 @@ axios.interceptors.response.use(response => {
   }
 }, error => {
   console.log(error);
-  if (error.toString().includes("Network Error")) {
-    ElementUI.Message({
-      type: 'error',
-      message: '无法连接服务器!'
-    });
-    //router.push({path: '/500'});
-  }
+  router.push({path: '/500'});
   //响应出现错误
   return Promise.reject(error);
 });
