@@ -15,7 +15,7 @@
 
 <script>
   export default {
-    name: "500"
+    name: "Page500"
   }
 </script>
 
