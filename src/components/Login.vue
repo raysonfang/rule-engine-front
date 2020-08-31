@@ -56,7 +56,7 @@
             if (valid) {
               this.logining = true;
               this.$axios
-                .post("/user/adminLogin",
+                .post("/user/login",
                   {
                     "username": this.ruleForm.username,
                     "password": this.ruleForm.password

@@ -99,19 +99,48 @@
       }
     },
     created() {
-
+      this.$axios
+        .post("/user/getUserInfo")
+        .then(res => {
+          let data = res.data;
+          if (data != null) {
+            this.username = data.username;
+            //this.avatar = data.avatarUrl;
+            sessionStorage.setItem('user', JSON.stringify(data));
+          } else {
+            this.$message({
+              showClose: true,
+              message: '请先登陆',
+              type: 'error'
+            });
+            this.$router.push({path: '/admin/login'});
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     methods: {
       rightHandleCommand(command) {
         if (command === 'logout') {
+          this.$axios.post("/user/logout")
+            .then(res => {
+              if (res.data) {
+                sessionStorage.removeItem('user');
+                this.$router.push({path: '/login'});
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         } else if (command === "userInfo") {
         }
       },
       handleOpen(key, keyPath) {
-        //console.log(key, keyPath);
+
       },
       handleClose(key, keyPath) {
-        //console.log(key, keyPath);
+
       }
     }
   }
