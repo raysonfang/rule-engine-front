@@ -3,7 +3,7 @@
 
     <el-steps :active="2" align-center>
       <el-step title="规则定义" icon="el-icon-edit"/>
-      <el-step title="规则定义" icon="el-icon-connection"/>
+      <el-step title="规则配置" icon="el-icon-connection"/>
       <el-step title="规则预览" icon="el-icon-view" class="stepp"/>
     </el-steps>
     <br>
@@ -140,7 +140,7 @@
 
                     <div v-else-if="action.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
-                                       :max="10000000000000" style="width: 193px"/>
+                                       :max="10000000000000" style="width: 100%"/>
                     </div>
 
                     <el-input v-else v-model="action.value" prop="value"/>
@@ -214,7 +214,7 @@
 
                     <div v-else-if="defaultAction.valueType==='NUMBER'">
                       <el-input-number v-model="action.value" :controls="false"
-                                       :max="10000000000000" style="width: 193px"/>
+                                       :max="10000000000000" style="width: 100%"/>
                     </div>
 
                     <el-input v-else v-model="defaultAction.value"/>

@@ -23,7 +23,7 @@
 
         <el-form-item label="条件配置">
           <el-form-item label="左值" style="margin-top: 18px">
-            <el-col :span="10">
+            <el-col :span="9">
               <el-form-item prop="config.leftValue.type">
                 <el-select v-model="form.config.leftValue.type" placeholder="请选择数据类型"
                            @change="leftValueTypeChange()">
@@ -35,6 +35,9 @@
                   <el-option label="集合" :value="8" @click.native="form.config.leftValue.valueType='COLLECTION'"/>
                 </el-select>
               </el-form-item>
+            </el-col>
+            <el-col :span="1">
+              &nbsp;
             </el-col>
             <el-col :span="9">
               <el-form-item prop="config.leftValue.value">
@@ -77,18 +80,23 @@
           </el-form-item>
 
           <el-form-item label="运算符" prop="config.symbol" style="margin-top: 18px">
-            <el-select v-model="form.config.symbol" placeholder="请选择运算符">
-              <el-option
-                v-for="item in symbolSelect.options"
-                :key="item.name"
-                :label="item.explanation"
-                :value="item.name">
-              </el-option>
-            </el-select>
+            <el-col :span="9">
+              <el-select v-model="form.config.symbol" placeholder="请选择运算符">
+                <el-option
+                  v-for="item in symbolSelect.options"
+                  :key="item.name"
+                  :label="item.explanation"
+                  :value="item.name">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="15">
+              &nbsp;
+            </el-col>
           </el-form-item>
 
           <el-form-item label="右值" style="margin-top: 18px">
-            <el-col :span="10">
+            <el-col :span="9">
               <el-form-item prop="config.rightValue.type">
                 <el-select v-model="form.config.rightValue.type" placeholder="请选择数据类型"
                            @change="rightValueTypeChange()">
@@ -100,6 +108,9 @@
                   <el-option v-if="isRightTypeSelectView('COLLECTION')" label="集合" :value="8"/>
                 </el-select>
               </el-form-item>
+            </el-col>
+            <el-col :span="1">
+              &nbsp;
             </el-col>
             <el-col :span="9">
               <el-form-item prop="config.rightValue.value">

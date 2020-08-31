@@ -2,9 +2,9 @@
   <div>
 
     <el-steps :active="3" align-center>
-      <el-step title="规则定义" icon="el-icon-edit"></el-step>
-      <el-step title="规则定义" icon="el-icon-connection"></el-step>
-      <el-step title="规则预览" icon="el-icon-view"></el-step>
+      <el-step title="规则定义" icon="el-icon-edit"/>
+      <el-step title="规则定义" icon="el-icon-connection"/>
+      <el-step title="规则预览" icon="el-icon-view"/>
     </el-steps>
     <br>
     <br>
@@ -106,16 +106,16 @@
           <div slot="header" class="box-card-header">
             <span>接口地址/参数</span>
             <i class="el-icon-document-copy pointer"
-               style="float: right; padding: 14px 0px;color: #5ba0f8;"></i>
+               style="float: right; padding: 14px 0;color: #5ba0f8;"/>
           </div>
           <div>
             <el-form label-width="40px">
               <el-form-item label="接口" style="margin-top: -8px;">
-                <el-input v-model="request.url" :readonly="true"></el-input>
+                <el-input v-model="request.url" :readonly="true"/>
               </el-form-item>
               <el-form-item label="入参" style="margin-top: -8px;">
                 <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="request.paramJson"
-                          :readonly="true"></el-input>
+                          :readonly="true"/>
               </el-form-item>
             </el-form>
           </div>
@@ -128,11 +128,10 @@
             <span>模拟运行</span>
 
             <i class="el-icon-video-play pointer"
-               style="float: right; padding: 14px 0px;color: #5ba0f8;" @click="run"></i>
+               style="float: right; padding: 14px 0;color: #5ba0f8;" @click="run"/>
 
             <i class=" el-icon-back pointer"
-               style="float: right; padding: 14px 9px;color: #5ba0f8;" @click="runGoBack"
-               v-if="runEnd"></i>
+               style="float: right; padding: 14px 9px;color: #5ba0f8;" @click="runGoBack" v-if="runEnd"/>
           </div>
 
           <div style="min-height: 150px" v-if="!runEnd">
@@ -146,23 +145,23 @@
                 {{param.name}}
                 <div v-if="param.valueType==='NUMBER'">
                   <el-input-number v-model="param.value" :controls="false"
-                                   :max="10000000000000" style="width: 193px"></el-input-number>
+                                   :max="10000000000000" style="width: 100%"/>
                 </div>
                 <div v-else-if="param.valueType==='BOOLEAN'">
                   <el-select v-model="param.value">
-                    <el-option label="true" value="true"></el-option>
-                    <el-option label="false" value="false"></el-option>
+                    <el-option label="true" value="true"/>
+                    <el-option label="false" value="false"/>
                   </el-select>
                 </div>
                 <div v-else-if="param.valueType==='COLLECTION'">
-                  <el-input type="textarea" :autosize="{ minRows: 2,maxRows:6}" v-model="param.value"></el-input>
+                  <el-input type="textarea" :autosize="{ minRows: 2,maxRows:6}" v-model="param.value"/>
                 </div>
-                <el-input v-model="param.value" v-else max="1000"></el-input>
+                <el-input v-model="param.value" v-else max="1000"/>
               </el-form-item>
             </el-form>
 
             <div v-else style="text-align: center">
-              <el-progress type="circle" :percentage="runPercentage"></el-progress>
+              <el-progress type="circle" :percentage="runPercentage"/>
             </div>
 
           </div>
@@ -171,7 +170,7 @@
             <el-form label-width="40px">
               <el-form-item label="结果" style="margin-top: -8px;">
                 <el-input type="textarea" :autosize="{ minRows: 5.5}" v-model="runData.value"
-                          :readonly="true"></el-input>
+                          :readonly="true"/>
               </el-form-item>
             </el-form>
           </div>
@@ -181,7 +180,7 @@
       </el-col>
     </el-row>
 
-    <el-backtop></el-backtop>
+    <el-backtop/>
 
   </div>
 </template>

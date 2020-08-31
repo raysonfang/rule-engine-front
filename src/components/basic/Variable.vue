@@ -55,7 +55,7 @@
 
           <el-col :span="3" style="margin-top: 26px;">
             <el-form-item v-for="pv in form.function.paramValues" :key="pv.code"
-                          style="text-align: right;margin-right:20px;margin-top: 19px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+                          style="text-align: right;margin-right:10px;margin-top: 19px;overflow: hidden;white-space: nowrap;">
               {{pv.name!==null?pv.name:pv.code}}
             </el-form-item>
           </el-col>
@@ -88,7 +88,7 @@
                 <el-option label="false" value="false"/>
               </el-select>
               <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
-                               :max="10000000000000" style="width: 193px;"/>
+                               :max="10000000000000" style="width: 100%"/>
               <el-select
                 v-else-if="pv.type===1||pv.type===0"
                 v-model="pv.valueName"
@@ -115,7 +115,7 @@
 
         <el-form-item label="变量值" v-if="form.type!==3" prop="value">
           <el-input-number v-if="form.type===7" v-model="form.value" :controls="false"
-                           :max="10000000000000" style="width: 193px"/>
+                           :max="10000000000000" style="width: 100%"/>
           <el-select v-else-if="form.type===6" v-model="form.value">
             <el-option label="true" value="true"/>
             <el-option label="false" value="false"/>
