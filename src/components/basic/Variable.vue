@@ -441,7 +441,7 @@
         return Array.from(paramValues)
           .map(item => ({
             // 搜索用元素变量用
-            loading: true,
+            loading: false,
             options: [],
             // ...
             name: item.name,

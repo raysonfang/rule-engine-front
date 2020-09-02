@@ -111,9 +111,9 @@
             this.$message({
               showClose: true,
               message: '请先登陆',
-              type: 'error'
+              type: 'warning'
             });
-            this.$router.push({path: '/admin/login'});
+            this.$router.push({path: '/login'});
           }
         })
         .catch(function (error) {
