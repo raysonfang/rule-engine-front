@@ -219,7 +219,13 @@
       },
       addElementForm() {
         this.clearValidate();
-        this.form = {};
+        this.form = {
+          id: null,
+          name: null,
+          code: null,
+          valueType: null,
+          description: null,
+        };
         this.dialogFormVisible = true;
       },
       deleteRow(row) {
