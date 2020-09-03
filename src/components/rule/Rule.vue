@@ -115,6 +115,8 @@
       formatterStatus(row) {
         if (row.status === 1) {
           return "可执行";
+        } else if (row.status === 2) {
+          return "已发布";
         }
         return "编辑中"
       },
@@ -131,8 +133,8 @@
         this.list();
       },
       edit(row) {
-        // 已发布
-        if (row.status === 1) {
+        // 可执行｜已发布
+        if (row.status === 1 || row.status === 2) {
           this.$router.push({path: '/RuleViewAndTest', query: {ruleId: row.id}});
           return;
         }

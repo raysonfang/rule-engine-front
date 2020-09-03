@@ -76,7 +76,7 @@
                 <br>
                 <div style="margin-left: 20px;">
                   <el-alert :closable="false" type="warning" style="padding: 6px 0 8px 0">
-                    {{enableDefaultAction===0?(defaultAction.variableValue!=null?defaultAction.variableValue:(defaultAction.valueName===''?'空':defaultAction.valueName)):'null'}}
+                    {{defaultAction.enableDefaultAction===0?(defaultAction.variableValue!=null?defaultAction.variableValue:(defaultAction.valueName===''?'空':defaultAction.valueName)):'null'}}
                   </el-alert>
                 </div>
 
@@ -92,6 +92,8 @@
         <el-row>
           <el-col :span="1">&nbsp;</el-col>
           <el-col :span="22">
+            <el-button type="primary" @click="publish()" style="float: right;margin-left: 20px;">发 布
+            </el-button>
             <el-button type="primary" @click="previous()" style="float: right;margin-left: 20px;">上 一 步
             </el-button>
           </el-col>
@@ -221,8 +223,8 @@
           valueType: null,
         },
         runEnd: false,
-        enableDefaultAction: 1,
         defaultAction: {
+          enableDefaultAction: 1,
           value: null,
           valueName: null,
           variableValue: null,
@@ -282,6 +284,23 @@
           console.log(error);
         });
       },
+      publish() {
+        this.$axios.post("/ruleEngine/rule/publish",
+          {
+            id: this.id
+          }
+        ).then(res => {
+          if (res.data) {
+            this.$message({
+              showClose: true,
+              message: '发布成功',
+              type: 'success'
+            });
+          }
+        }).catch(error => {
+          console.log(error);
+        });
+      },
       getRule(id) {
         this.$axios.post("/ruleEngine/rule/getRule", {
           "id": id
@@ -300,8 +319,8 @@
             this.action.variableValue = da.action.variableValue;
 
             // default action
-            this.enableDefaultAction = da.enableDefaultAction;
             if (da.defaultAction !== null) {
+              this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
               this.defaultAction.value = da.defaultAction.value;
               this.defaultAction.valueName = da.defaultAction.valueName;
               this.defaultAction.variableValue = da.defaultAction.variableValue;

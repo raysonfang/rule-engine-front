@@ -11,7 +11,17 @@
 
     <el-row>
       <el-col :span="6">
-        &nbsp;
+        <el-card class="box-card">
+          <div slot="header" class="box-card-header">
+            <span>异常报警</span>
+          </div>
+          <div>
+            <el-switch v-model="abnormalAlarm.enable" :active-value="0" :inactive-value="1"/>
+            <br>
+            <br>
+            <el-input v-model="abnormalAlarm.email" type="textarea"/>
+          </div>
+        </el-card>
       </el-col>
       <el-col :span="12">
 
@@ -165,7 +175,7 @@
                 <span>默认结果</span>
               </div>
               <div>
-                <el-switch v-model="enableDefaultAction" :active-value="0" :inactive-value="1"/>
+                <el-switch v-model="defaultAction.enableDefaultAction" :active-value="0" :inactive-value="1"/>
                 <br>
                 <br>
                 <el-form ref="defaultActionForm" :model="defaultAction" :rules="defaultActionRules">
@@ -306,8 +316,8 @@
             {required: true, message: '请输入结果值', trigger: 'blur'},
           ],
         },
-        enableDefaultAction: 1,
         defaultAction: {
+          enableDefaultAction: 1,
           value: undefined,
           valueName: null,
           valueType: null,
@@ -326,7 +336,11 @@
         currentConditionDragging: null,
         currentConditionCgId: null,
         currentConditionDraggingCG: null,
-        conditionGroup: []
+        conditionGroup: [],
+        abnormalAlarm: {
+          enable: false,
+          email: null,
+        }
       }
     },
     methods: {
@@ -439,7 +453,6 @@
       update() {
         this.$axios.post("/ruleEngine/rule/updateRule", {
           "id": this.id,
-          "enableDefaultAction": this.enableDefaultAction,
           "conditionGroup": this.conditionGroup,
           "action": {
             "value": this.action.value,
@@ -447,6 +460,7 @@
             "valueType": this.action.valueType
           },
           "defaultAction": {
+            "enableDefaultAction": this.defaultAction.enableDefaultAction,
             "value": this.defaultAction.value,
             "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
             "valueType": this.defaultAction.valueType
@@ -480,7 +494,7 @@
       },
       nextStep() {
         let ref = this.$refs['actionForm'];
-        if (this.enableDefaultAction === 0) {
+        if (this.defaultAction.enableDefaultAction === 0) {
           ref = this.$refs['actionForm', 'defaultActionForm'];
         }
         ref.validate((valid) => {
@@ -489,7 +503,6 @@
             // 先更新规则，到待发布
             this.$axios.post("/ruleEngine/rule/generationRelease", {
               "id": this.id,
-              "enableDefaultAction": this.enableDefaultAction,
               "conditionGroup": this.conditionGroup,
               "action": {
                 "value": this.action.value,
@@ -497,6 +510,7 @@
                 "valueType": this.action.valueType
               },
               "defaultAction": {
+                "enableDefaultAction": this.defaultAction.enableDefaultAction,
                 "value": this.defaultAction.value,
                 "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
                 "valueType": this.defaultAction.valueType
@@ -669,9 +683,9 @@
             this.action.value = da.action.value;
             this.action.valueName = da.action.valueName;
             this.action.valueType = da.action.valueType;
-            // default action
-            this.enableDefaultAction = da.enableDefaultAction;
             if (da.defaultAction != null) {
+              // default action
+              this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
               this.defaultAction.type = this.getType(da.defaultAction.type, da.defaultAction.valueType);
               this.defaultAction.value = da.defaultAction.value;
               this.defaultAction.valueName = da.defaultAction.valueName;
