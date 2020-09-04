@@ -89,17 +89,6 @@
         </el-row>
         <br>
         <br>
-        <el-row>
-          <el-col :span="1">&nbsp;</el-col>
-          <el-col :span="22">
-            <el-button type="primary" @click="publish()" style="float: right;margin-left: 20px;">发 布
-            </el-button>
-            <el-button type="primary" @click="previous()" style="float: right;margin-left: 20px;">上 一 步
-            </el-button>
-          </el-col>
-          <el-col :span="1">&nbsp;</el-col>
-        </el-row>
-
       </el-col>
 
       <el-col :span="6">
@@ -239,9 +228,6 @@
         this.runPercentage = 10;
         this.runEnd = false;
       },
-      previous() {
-        this.$router.push({path: '/RuleConfig', query: {ruleId: this.id}});
-      },
       getConditionNamePrefix(type) {
         if (type === 0) {
           return "元素";
@@ -265,7 +251,7 @@
           "param": params
         };
         this.runPercentage = 40;
-        this.$axios.post("/ruleEngine/ruleTest/run", requestJson).then(res => {
+        this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
           let da = res.data;
           if (da != null) {
             this.runData.value = da.value + "";
@@ -283,25 +269,8 @@
           console.log(error);
         });
       },
-      publish() {
-        this.$axios.post("/ruleEngine/rule/publish",
-          {
-            id: this.id
-          }
-        ).then(res => {
-          if (res.data) {
-            this.$message({
-              showClose: true,
-              message: '发布成功',
-              type: 'success'
-            });
-          }
-        }).catch(error => {
-          console.log(error);
-        });
-      },
       getRule(id) {
-        this.$axios.post("/ruleEngine/rule/getViewRule", {
+        this.$axios.post("/ruleEngine/rule/getPublishRule", {
           "id": id
         }).then(res => {
           let da = res.data;

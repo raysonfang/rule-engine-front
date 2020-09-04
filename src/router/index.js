@@ -14,6 +14,7 @@ import Variable from '@/components/basic/Variable.vue'
 import Rule from '@/components/rule/Rule.vue'
 import RuleConfig from '@/components/rule/RuleConfig.vue'
 import RuleViewAndTest from '@/components/rule/RuleViewAndTest.vue'
+import RuleViewPublish from '@/components/rule/RuleViewPublish.vue'
 import RuleDefinition from '@/components/rule/RuleDefinition.vue'
 
 import SystemSetting from '@/components/setting/SystemSetting.vue'
@@ -85,6 +86,11 @@ export default new Router({
           path: '/ruleViewAndTest',
           name: 'RuleViewAndTest',
           component: RuleViewAndTest
+        },
+        {
+          path: '/ruleViewPublish',
+          name: 'RuleViewPublish',
+          component: RuleViewPublish
         },
         {
           path: '/ruleDefinition',

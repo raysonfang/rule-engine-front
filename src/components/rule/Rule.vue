@@ -58,9 +58,18 @@
         label="规则状态"
         width="180">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status===2" size="medium" effect="plain">（ 已发布 ）</el-tag>
-          <el-tag v-else-if="scope.row.status===0" type="warning" size="medium" effect="plain">（ 编辑中 ）</el-tag>
-          <el-tag v-else-if="scope.row.status===1" type="success" size="medium" effect="plain">（ 待发布 ）</el-tag>
+          <el-tag v-if="scope.row.isPublish" @click="show(scope.row)" size="medium" effect="plain"
+                  style="cursor: pointer">
+            （ 已发布 ）
+          </el-tag>
+          <el-tag v-if="scope.row.status===0" @click="edit(scope.row)" type="warning" size="medium" effect="plain"
+                  style="cursor: pointer">
+            （ 编辑中 ）
+          </el-tag>
+          <el-tag v-else-if="scope.row.status===1" @click="edit(scope.row)" type="success" size="medium" effect="plain"
+                  style="cursor: pointer">
+            （ 待发布 ）
+          </el-tag>
         </template>
       </el-table-column>
 
@@ -74,7 +83,7 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="140">
+        width="120">
         <template slot-scope="scope">
           <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteRow(scope.row)" type="text" size="small">删除</el-button>
@@ -135,6 +144,9 @@
           return;
         }
         this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
+      },
+      show(row) {
+        this.$router.push({path: '/RuleViewPublish', query: {ruleId: row.id}});
       },
       deleteRow(row) {
         this.$axios.post("/ruleEngine/rule/delete", {
