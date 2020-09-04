@@ -696,8 +696,7 @@
           console.log(error);
         });
       }
-    },
-    mounted() {
+    },mounted() {
       this.id = this.$route.query.ruleId;
       this.getRule();
     }

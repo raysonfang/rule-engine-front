@@ -264,9 +264,8 @@
           "ruleCode": this.code,
           "param": params
         };
-        this.runPercentage = 30;
+        this.runPercentage = 40;
         this.$axios.post("/ruleEngine/ruleTest/run", requestJson).then(res => {
-          this.runPercentage = 40;
           let da = res.data;
           if (da != null) {
             this.runData.value = da.value + "";
@@ -330,7 +329,7 @@
           console.log(error);
         });
       }
-    }, created() {
+    }, mounted() {
       let ruleId = this.$route.query.ruleId;
       this.getRule(ruleId);
       this.$axios.post("/ruleEngine/rule/ruleInterfaceDescription", {

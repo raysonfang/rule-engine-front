@@ -1,36 +1,48 @@
 <template>
-  <div class="login-container">
-    <el-form :model="ruleForm" :rules="rules"
-             status-icon
-             ref="ruleForm"
-             label-position="left"
-             label-width="0px"
-             class="demo-ruleForm login-page">
-      <br>
-      <h3 class="title">系统登录</h3>
-      <br>
-      <el-form-item prop="username">
-        <el-input type="text"
-                  v-model="ruleForm.username"
-                  auto-complete="off"
-                  placeholder="请输入用户名"/>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input type="password"
-                  v-model="ruleForm.password"
-                  auto-complete="off"
-                  placeholder="请输入密码"
-        />
-      </el-form-item>
-      <el-checkbox
-        v-model="checked"
-        class="rememberme">记住密码
-      </el-checkbox>
-      <br> <br>
-      <el-form-item style="width:100%;">
-        <el-button type="primary" style="width:100%;" @click="handleSubmit" :loading="logining">登录</el-button>
-      </el-form-item>
-    </el-form>
+  <div>
+    <el-row>
+      <el-col :span="2">
+        <div style="padding-left: 20px;margin-top: 6px;">
+          <img src="../assets/logo4.png" class="logo" alt=""/>
+        </div>
+      </el-col>
+      <el-col :span="22">
+        &nbsp;
+      </el-col>
+    </el-row>
+    <div class="login-container">
+      <el-form :model="ruleForm" :rules="rules"
+               status-icon
+               ref="ruleForm"
+               label-position="left"
+               label-width="0px"
+               class="demo-ruleForm login-page">
+        <br>
+        <h3 class="title">系统登录</h3>
+        <br>
+        <el-form-item prop="username">
+          <el-input type="text"
+                    v-model="ruleForm.username"
+                    auto-complete="off"
+                    placeholder="请输入用户名"/>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input type="password"
+                    v-model="ruleForm.password"
+                    auto-complete="off"
+                    placeholder="请输入密码"
+          />
+        </el-form-item>
+        <el-checkbox
+          v-model="checked"
+          class="rememberme">记住密码
+        </el-checkbox>
+        <br> <br>
+        <el-form-item style="width:100%;">
+          <el-button type="primary" style="width:100%;" @click="handleSubmit" :loading="logining">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -108,5 +120,10 @@
   label.el-checkbox.rememberme {
     margin: 0 0 15px;
     text-align: left;
+  }
+
+  .logo {
+    width: 180px;
+    height: 59px;
   }
 </style>

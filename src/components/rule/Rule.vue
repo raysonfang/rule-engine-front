@@ -12,7 +12,8 @@
                    placeholder="请选择数据 ">
           <el-option label="全部" :value="null"/>
           <el-option label="编辑中" value="0"/>
-          <el-option label="可执行" value="1"/>
+          <el-option label="待发布" value="1"/>
+          <el-option label="已发布" value="2"/>
         </el-select>
       </el-form-item>
 
@@ -54,10 +55,13 @@
       </el-table-column>
 
       <el-table-column
-        prop="status"
         label="规则状态"
-        width="140"
-        :formatter="formatterStatus">
+        width="180">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status===2" size="medium" effect="plain">（ 已发布 ）</el-tag>
+          <el-tag v-else-if="scope.row.status===0" type="warning" size="medium" effect="plain">（ 编辑中 ）</el-tag>
+          <el-tag v-else-if="scope.row.status===1" type="success" size="medium" effect="plain">（ 待发布 ）</el-tag>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -112,14 +116,6 @@
         },
       }
     }, methods: {
-      formatterStatus(row) {
-        if (row.status === 1) {
-          return "可执行";
-        } else if (row.status === 2) {
-          return "已发布";
-        }
-        return "编辑中"
-      },
       reset(formName) {
         this.search.form.status = null;
         this.$refs[formName].resetFields();
@@ -193,5 +189,7 @@
 </script>
 
 <style scoped>
-
+  .el-tag {
+    padding: 0;
+  }
 </style>
