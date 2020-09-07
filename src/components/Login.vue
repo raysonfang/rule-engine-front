@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-col :span="2">
-        <div style="padding-left: 20px;margin-top: 6px;">
+        <div style="margin-left: 20px;margin-top: 6px;">
           <img src="../assets/logo4.png" class="logo" alt=""/>
         </div>
       </el-col>
@@ -111,7 +111,7 @@
     border-radius: 5px;
     margin: 0 auto;
     width: 350px;
-    padding: 20px 35px 10px 15px;
+    padding: 20px 35px 10px 35px;
     background: #fff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;

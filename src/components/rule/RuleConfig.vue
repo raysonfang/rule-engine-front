@@ -11,16 +11,52 @@
 
     <el-row>
       <el-col :span="6">
+
+        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
+          <div slot="header" class="box-card-header">
+            <span>基本信息</span>
+          </div>
+          <div>
+            <el-form label-width="40px">
+              <el-form-item label="名称" prop="name" style="margin-top: -8px;">
+                <el-input v-model="name" :disabled="true"/>
+              </el-form-item>
+              <el-form-item label="Code" prop="code" style="margin-top: -8px;">
+                <el-input v-model="code" :disabled="true"/>
+              </el-form-item>
+              <el-form-item label="说明" prop="description" style="margin-top: -8px;">
+                <el-input type="textarea" v-model="description" :disabled="true"/>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+        <br>
+        <br>
         <el-card class="box-card">
           <div slot="header" class="box-card-header">
             <span>异常报警</span>
+            <template>
+              <el-popover
+                placement="top-start"
+                title="提示"
+                width="200"
+                trigger="hover"
+                style="float: right"
+                content="多个邮箱之间用（,）隔开。">
+                <i slot="reference" class="el-icon-postcard"/>
+              </el-popover>
+            </template>
           </div>
-          <div>
-            <el-switch v-model="abnormalAlarm.enable" :active-value="0" :inactive-value="1"/>
+          <el-form ref="abnormalAlarm" :model="abnormalAlarm">
+
+            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false"/>
             <br>
             <br>
-            <el-input v-model="abnormalAlarm.email" type="textarea"/>
-          </div>
+            <el-form-item prop="email"
+                          :rules="abnormalAlarm.enable?{required: true, message: '请输入邮箱地址', trigger: 'blur'}:{}">
+              <el-input v-model="abnormalAlarm.email" type="textarea"/>
+            </el-form-item>
+          </el-form>
         </el-card>
       </el-col>
       <el-col :span="12">
@@ -175,11 +211,13 @@
                 <span>默认结果</span>
               </div>
               <div>
-                <el-switch v-model="defaultAction.enableDefaultAction" :active-value="0" :inactive-value="1"/>
-                <br>
-                <br>
-                <el-form ref="defaultActionForm" :model="defaultAction" :rules="defaultActionRules">
-                  <el-form-item prop="type" class="el-col-6">
+                <el-form ref="defaultAction" :model="defaultAction">
+
+                  <el-switch v-model="defaultAction.enableDefaultAction" :active-value="0" :inactive-value="1"/>
+                  <br>
+                  <br>
+                  <el-form-item prop="valueType" class="el-col-6"
+                                :rules="defaultAction.enableDefaultAction===0? {required: true, message: '请选择规则结果类型', trigger: 'blur'}:{}">
                     <el-select v-model="defaultAction.type" placeholder="请选择数据类型"
                                @change="defaultActionTypeChange()">
                       <el-option label="元素" :value="0"/>
@@ -197,7 +235,9 @@
                   <el-form-item class="el-col-1">
                     &nbsp;
                   </el-form-item>
-                  <el-form-item prop="value" class="el-col-17">
+                  <el-form-item prop="value" class="el-col-17"
+                                :rules="defaultAction.enableDefaultAction===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{}">
+
                     <el-select v-if="defaultAction.type===3" v-model="defaultAction.value">
                       <el-option label="true" value="true"/>
                       <el-option label="false" value="false"/>
@@ -223,7 +263,7 @@
 
 
                     <div v-else-if="defaultAction.valueType==='NUMBER'">
-                      <el-input-number v-model="action.value" :controls="false"
+                      <el-input-number v-model="defaultAction.value" :controls="false"
                                        :max="10000000000000" style="width: 100%"/>
                     </div>
 
@@ -291,7 +331,21 @@
     name: "RuleConfig",
     data() {
       return {
-        currentConditionGroupId: null,
+        id: null,
+        name: null,
+        code: null,
+        description: null,
+        conditionGroup: [],
+        condition: {
+          dialogFormVisible: false,
+          options: null,
+          loading: false,
+          value: null,
+        },
+        abnormalAlarm: {
+          enable: false,
+          email: "",
+        },
         action: {
           value: undefined,
           valueName: null,
@@ -302,18 +356,10 @@
         },
         actionRules: {
           type: [
-            {required: true, message: '请选择规则结果类型', trigger: 'blur'},
+            {required: true, message: '请选择规则结果类型', trigger: ['blur', 'change']},
           ],
           value: [
-            {required: true, message: '请输入结果值', trigger: 'blur'},
-          ],
-        },
-        defaultActionRules: {
-          type: [
-            {required: true, message: '请选择规则结果类型', trigger: 'blur'},
-          ],
-          value: [
-            {required: true, message: '请输入结果值', trigger: 'blur'},
+            {required: true, message: '请输入结果值', trigger: ['blur', 'change']},
           ],
         },
         defaultAction: {
@@ -325,22 +371,11 @@
           loading: false,
           options: [],
         },
-        condition: {
-          dialogFormVisible: false,
-          options: null,
-          loading: false,
-          value: null,
-        },
-        id: null,
+        currentConditionGroupId: null,
         conditionGroupDraggable: false,
         currentConditionDragging: null,
         currentConditionCgId: null,
         currentConditionDraggingCG: null,
-        conditionGroup: [],
-        abnormalAlarm: {
-          enable: false,
-          email: null,
-        }
       }
     },
     methods: {
@@ -464,6 +499,10 @@
             "value": this.defaultAction.value,
             "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
             "valueType": this.defaultAction.valueType
+          },
+          "abnormalAlarm": {
+            "enable": this.abnormalAlarm.enable,
+            "email": this.abnormalAlarm.email.split(",")
           }
         }).then(res => {
           let da = res.data;
@@ -493,35 +532,42 @@
         return type;
       },
       nextStep() {
-        let ref = this.$refs['actionForm'];
-        if (this.defaultAction.enableDefaultAction === 0) {
-          ref = this.$refs['actionForm', 'defaultActionForm'];
-        }
-        ref.validate((valid) => {
+        // 先更新规则，到待发布
+        this.$refs["actionForm"].validate((valid) => {
           if (valid) {
-            //defaultActionForm
-            // 先更新规则，到待发布
-            this.$axios.post("/ruleEngine/rule/generationRelease", {
-              "id": this.id,
-              "conditionGroup": this.conditionGroup,
-              "action": {
-                "value": this.action.value,
-                "type": this.action.type > 1 ? 2 : this.action.type,
-                "valueType": this.action.valueType
-              },
-              "defaultAction": {
-                "enableDefaultAction": this.defaultAction.enableDefaultAction,
-                "value": this.defaultAction.value,
-                "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
-                "valueType": this.defaultAction.valueType
+            this.$refs["defaultAction"].validate((valid) => {
+              if (valid) {
+                this.$refs["abnormalAlarm"].validate((valid) => {
+                  if (valid) {
+                    this.$axios.post("/ruleEngine/rule/generationRelease", {
+                      "id": this.id,
+                      "conditionGroup": this.conditionGroup,
+                      "action": {
+                        "value": this.action.value,
+                        "type": this.action.type > 1 ? 2 : this.action.type,
+                        "valueType": this.action.valueType
+                      },
+                      "defaultAction": {
+                        "enableDefaultAction": this.defaultAction.enableDefaultAction,
+                        "value": this.defaultAction.value,
+                        "type": this.defaultAction.type > 1 ? 2 : this.defaultAction.type,
+                        "valueType": this.defaultAction.valueType
+                      },
+                      "abnormalAlarm": {
+                        "enable": this.abnormalAlarm.enable,
+                        "email": this.abnormalAlarm.email.split(",")
+                      }
+                    }).then(res => {
+                      let da = res.data;
+                      if (da) {
+                        this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
+                      }
+                    }).catch(function (error) {
+                      console.log(error);
+                    });
+                  }
+                });
               }
-            }).then(res => {
-              let da = res.data;
-              if (da) {
-                this.$router.push({path: '/RuleViewAndTest', query: {ruleId: this.id}});
-              }
-            }).catch(function (error) {
-              console.log(error);
             });
           }
         });
@@ -676,6 +722,9 @@
           let da = res.data;
           if (da != null) {
             this.id = da.id;
+            this.name = da.name;
+            this.code = da.code;
+            this.description = da.description;
             // condition group
             this.conditionGroup = da.conditionGroup;
             // action
@@ -687,9 +736,13 @@
               // default action
               this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
               this.defaultAction.type = this.getType(da.defaultAction.type, da.defaultAction.valueType);
-              this.defaultAction.value = da.defaultAction.value;
+              this.defaultAction.value = da.defaultAction.value == null ? undefined : da.defaultAction.value;
               this.defaultAction.valueName = da.defaultAction.valueName;
               this.defaultAction.valueType = da.defaultAction.valueType;
+            }
+            this.abnormalAlarm = {
+              "enable": da.abnormalAlarm.enable,
+              "email": da.abnormalAlarm.email.join(',')
             }
           }
         }).catch(function (error) {

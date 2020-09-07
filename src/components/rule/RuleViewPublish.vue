@@ -11,12 +11,37 @@
 
     <el-row>
       <el-col :span="6">
-        <el-card class="box-card">
+
+        <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
           <div slot="header" class="box-card-header">
-            <span>规则</span>
+            <span>基本信息</span>
           </div>
           <div>
+            <el-form label-width="40px">
+              <el-form-item label="名称" prop="name" style="margin-top: -8px;">
+                <el-input v-model="name" :disabled="true"/>
+              </el-form-item>
+              <el-form-item label="Code" prop="code" style="margin-top: -8px;">
+                <el-input v-model="code" :disabled="true"/>
+              </el-form-item>
+              <el-form-item label="说明" prop="description" style="margin-top: -8px;">
+                <el-input type="textarea" v-model="description" :disabled="true"/>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+        <br>
+        <br>
 
+        <el-card class="box-card">
+          <div slot="header" class="box-card-header">
+            <span>异常报警</span>
+          </div>
+          <div>
+            <el-switch v-model="abnormalAlarm.enable" :active-value="true" :inactive-value="false" :disabled="true"/>
+            <br>
+            <br>
+            <el-input v-model="abnormalAlarm.email" type="textarea" :disabled="true"/>
           </div>
         </el-card>
       </el-col>
@@ -178,7 +203,7 @@
 
 <script>
   export default {
-    name: "RuleViewAndTest",
+    name: "RuleViewPublish",
     data() {
       return {
         id: null,
@@ -221,6 +246,10 @@
           type: null,
           loading: false,
           options: [],
+        },
+        abnormalAlarm: {
+          enable: false,
+          email: ''
         }
       }
     }, methods: {
@@ -292,6 +321,10 @@
               this.defaultAction.value = da.defaultAction.value;
               this.defaultAction.valueName = da.defaultAction.valueName;
               this.defaultAction.variableValue = da.defaultAction.variableValue;
+            }
+            this.abnormalAlarm = {
+              "enable": da.abnormalAlarm.enable,
+              "email": da.abnormalAlarm.email.join(',')
             }
           }
         }).catch(function (error) {
