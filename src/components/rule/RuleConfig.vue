@@ -56,14 +56,14 @@
                   <el-alert
                     style="padding: 6px 0 8.5px 0"
                     :id="c.id" class="item"
-                    v-for="c in cg.conditionSets"
+                    v-for="c in cg.conditionGroupCondition"
                     :key="c.id"
                     :closable="false"
 
                     draggable="true"
                     v-on:dragstart.native="handleDragStart($event, c,cg.id)"
                     v-on:dragover.prevent.native="handleDragOver($event)"
-                    v-on:dragenter.native="handleDragEnter($event, c, cg.conditionSets,cg.id)"
+                    v-on:dragenter.native="handleDragEnter($event, c, cg.conditionGroupCondition,cg.id)"
                     v-on:dragend.native="handleDragEnd($event)">
 
                     <el-tag style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;font-size: 13px;">
@@ -90,7 +90,7 @@
                     <span style="color: #606266">   {{c.condition.config.rightValue.valueName}}</span>
 
                     <i class="el-alert__closebtn el-icon-close" style="color: rgb(91, 160, 248)"
-                       @click="removeCondition(cg.conditionSets,c.condition.id)"/>
+                       @click="removeCondition(cg.conditionGroupCondition,c.condition.id)"/>
                   </el-alert>
                 </el-card>
               </div>
@@ -432,10 +432,10 @@
         this.conditionGroup.forEach((value, index) => {
           if (value.id === this.currentConditionGroupId) {
             let newOrderNo = 1;
-            if (value.conditionSets[value.conditionSets.length - 1] !== undefined) {
-              newOrderNo = value.conditionSets[value.conditionSets.length - 1].orderNo + 1;
+            if (value.conditionGroupCondition[value.conditionGroupCondition.length - 1] !== undefined) {
+              newOrderNo = value.conditionGroupCondition[value.conditionGroupCondition.length - 1].orderNo + 1;
             }
-            value.conditionSets.push({
+            value.conditionGroupCondition.push({
               orderNo: newOrderNo,
               condition: {
                 id: item.id,
@@ -564,7 +564,7 @@
           uuid: uuidv1(),
           name: "条件组",
           orderNo: newOrderNo,
-          conditionSets: []
+          conditionGroupCondition: []
         };
         this.conditionGroup.push(newConditionGroup);
       },
@@ -581,11 +581,11 @@
         this.condition.dialogFormVisible = true;
         this.currentConditionGroupId = cg.id;
       },
-      removeCondition(conditionSets, id) {
+      removeCondition(conditionGroupCondition, id) {
         // 删除
-        conditionSets.forEach((value, index) => {
+        conditionGroupCondition.forEach((value, index) => {
           if (value.condition.id === id) {
-            conditionSets.splice(index, 1);
+            conditionGroupCondition.splice(index, 1);
           }
         });
       },
@@ -666,11 +666,11 @@
         }
         return value.uuid;
       },
-      getRule() {
+      getRuleConfig() {
         if (this.id === undefined) {
           return;
         }
-        this.$axios.post("/ruleEngine/rule/getRule", {
+        this.$axios.post("/ruleEngine/rule/getRuleConfig", {
           "id": this.id
         }).then(res => {
           let da = res.data;
@@ -696,9 +696,9 @@
           console.log(error);
         });
       }
-    },mounted() {
+    }, mounted() {
       this.id = this.$route.query.ruleId;
-      this.getRule();
+      this.getRuleConfig();
     }
   }
 </script>

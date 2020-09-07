@@ -38,7 +38,7 @@
                     v-for="(cg, cgi) in conditionGroup" :key="cg.id">
                     <span style="color: #606266;font-size: 14px;" v-if="0===cgi">如果</span>
                     <span style="color: #606266;font-size: 14px;" v-else>或者</span>
-                    <div v-for="(c,ci) in cg.conditionSets" style="margin-left: 20px;">
+                    <div v-for="(c,ci) in cg.conditionGroupCondition" style="margin-left: 20px;">
                       <el-tag class="item" type="info" effect="plain" style="margin-top: 2px">
                         <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
                           {{getConditionNamePrefix(c.condition.config.leftValue.type)}}
@@ -58,7 +58,7 @@
                       </el-tag>
 
                       <br>
-                      <span style="color: #606266;font-size: 14px;">   {{cg.conditionSets.length-1===ci?'':'并且'}}</span>
+                      <span style="color: #606266;font-size: 14px;">   {{cg.conditionGroupCondition.length-1===ci?'':'并且'}}</span>
                     </div>
                   </el-timeline-item>
                 </el-timeline>
@@ -300,7 +300,7 @@
           console.log(error);
         });
       },
-      getRule(id) {
+      getRuleView(id) {
         this.$axios.post("/ruleEngine/rule/getViewRule", {
           "id": id
         }).then(res => {
@@ -331,7 +331,7 @@
       }
     }, mounted() {
       let ruleId = this.$route.query.ruleId;
-      this.getRule(ruleId);
+      this.getRuleView(ruleId);
       this.$axios.post("/ruleEngine/rule/ruleInterfaceDescription", {
         "id": ruleId
       }).then(res => {
