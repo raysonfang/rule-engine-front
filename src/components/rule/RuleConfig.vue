@@ -467,8 +467,14 @@
         this.conditionGroup.forEach((value, index) => {
           if (value.id === this.currentConditionGroupId) {
             let newOrderNo = 1;
-            if (value.conditionGroupCondition[value.conditionGroupCondition.length - 1] !== undefined) {
-              newOrderNo = value.conditionGroupCondition[value.conditionGroupCondition.length - 1].orderNo + 1;
+            // 如果存在条件组与条件的关系
+            if (value.conditionGroupCondition != null) {
+              if (value.conditionGroupCondition[value.conditionGroupCondition.length - 1] !== undefined) {
+                newOrderNo = value.conditionGroupCondition[value.conditionGroupCondition.length - 1].orderNo + 1;
+              }
+            } else {
+              // 初始化
+              value.conditionGroupCondition = [];
             }
             value.conditionGroupCondition.push({
               orderNo: newOrderNo,
