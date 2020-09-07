@@ -390,6 +390,7 @@
         this.list();
       },
       list() {
+        this.loading = true;
         this.$axios.post("/ruleEngine/variable/list", {
           "page": {
             "pageSize": this.page.pageSize,

@@ -110,7 +110,7 @@
     data() {
       return {
         tableData: [],
-        loading: false,
+        loading: true,
         page: {
           pageIndex: 1,
           pageSize: 10,
@@ -165,6 +165,7 @@
           console.log(error);
         });
       }, list() {
+        this.loading = true;
         this.$axios.post("/ruleEngine/rule/list", {
           "page": {
             "pageSize": this.page.pageSize,

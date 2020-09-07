@@ -116,7 +116,7 @@
           paramsJson: null
         },
         tableData: [],
-        loading: false,
+        loading: true,
         page: {
           pageIndex: 1,
           pageSize: 10,
@@ -151,6 +151,7 @@
         this.list();
       },
       list() {
+        this.loading = true;
         this.$axios.post("/ruleEngine/function/list", {
           "page": {
             "pageSize": this.page.pageSize,
