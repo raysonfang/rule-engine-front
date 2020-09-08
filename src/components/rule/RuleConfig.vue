@@ -359,7 +359,7 @@
             {required: true, message: '请选择规则结果类型', trigger: ['blur', 'change']},
           ],
           value: [
-            {required: true, message: '请输入结果值', trigger: ['blur', 'change']},
+            {required: true, message: '请输入结果值', trigger: ['blur']},
           ],
         },
         defaultAction: {
