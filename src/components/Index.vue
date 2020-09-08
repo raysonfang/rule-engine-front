@@ -1,25 +1,25 @@
 <template>
   <div id="app">
     <el-container>
-      <el-header>
+      <el-header style="min-width: 1400px">
         <el-row>
           <el-col :span="2">
             <div class="grid-content bg-purple">
               <img src="../assets/logo4.png" class="logo" alt=""/>
             </div>
           </el-col>
-          <el-col :span="19">
+          <el-col :span="18">
             <div class="grid-content bg-purple-light">
               &nbsp;
             </div>
           </el-col>
-          <el-col :span="2">
-            <div class="grid-content bg-purple user">
+          <el-col :span="3">
+            <div class="grid-content bg-purple user" style="width: 100%">
               <el-dropdown @command="rightHandleCommand" trigger="click">
-          <span class="el-dropdown-link username pointer" style="float: right">
-            {{username}}&nbsp;<i class="el-icon-arrow-down"/>
-          </span>
-                <el-dropdown-menu slot="dropdown">
+                <span class="el-dropdown-link username pointer" style="float: right">
+                  {{username}}&nbsp;<i class="el-icon-arrow-down"/>
+                </span>
+                <el-dropdown-menu slot="dropdown" style="width: 96px">
                   <el-dropdown-item command="userInfo">个人信息</el-dropdown-item>
                   <el-dropdown-item command="logout" divided>退出</el-dropdown-item>
                 </el-dropdown-menu>
@@ -33,7 +33,7 @@
         </el-row>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="180px">
           <el-menu
             router :default-active="$route.path"
             class="el-menu-vertical-aside"
@@ -81,7 +81,7 @@
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1300px">
+        <el-main style="min-width: 1220px">
           <router-view/>
         </el-main>
       </el-container>
