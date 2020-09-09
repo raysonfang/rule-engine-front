@@ -385,13 +385,13 @@
                 "leftValue": {
                   "value": this.form.config.leftValue.value,
                   "valueType": this.getValueType(this.form.config.leftValue.type, this.form.config.leftValue.valueType),
-                  "type": this.form.config.leftValue.type > 5 ? 2 : this.form.config.leftValue.type,
+                  "type": this.form.config.leftValue.type >= 5 ? 2 : this.form.config.leftValue.type,
                 },
                 "symbol": this.form.config.symbol,
                 "rightValue": {
                   "value": this.form.config.rightValue.value,
                   "valueType": this.getValueType(this.form.config.rightValue.type, this.form.config.rightValue.valueType),
-                  "type": this.form.config.rightValue.type > 5 ? 2 : this.form.config.rightValue.type,
+                  "type": this.form.config.rightValue.type >= 5 ? 2 : this.form.config.rightValue.type,
                 }
               }
             }).then(res => {
