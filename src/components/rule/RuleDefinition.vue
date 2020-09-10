@@ -2,7 +2,7 @@
   <div id="ruleDefinition">
     <el-steps :active="1" align-center>
       <el-step title="规则定义" icon="el-icon-edit"/>
-      <el-step title="规则定义" icon="el-icon-connection" class="stepp"/>
+      <el-step title="规则配置" icon="el-icon-connection" class="stepp"/>
       <el-step title="规则预览" icon="el-icon-view" class="stepp"/>
     </el-steps>
     <br>

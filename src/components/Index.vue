@@ -76,6 +76,7 @@
                 <span>设置</span>
               </template>
               <el-menu-item-group>
+                <el-menu-item index="/systemLog">系统日志</el-menu-item>
                 <el-menu-item index="/systemSetting">系统设置</el-menu-item>
               </el-menu-item-group>
             </el-submenu>

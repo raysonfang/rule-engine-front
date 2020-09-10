@@ -3,7 +3,7 @@
 
     <el-steps :active="3" align-center>
       <el-step title="规则定义" icon="el-icon-edit"/>
-      <el-step title="规则定义" icon="el-icon-connection"/>
+      <el-step title="规则配置" icon="el-icon-connection"/>
       <el-step title="规则预览" icon="el-icon-view"/>
     </el-steps>
     <br>
@@ -325,7 +325,10 @@
             this.abnormalAlarm = {
               "enable": da.abnormalAlarm.enable,
               "email": da.abnormalAlarm.email.join(',')
-            }
+            };
+            this.request.url = da.ruleInterfaceDescription.requestUrl;
+            this.request.paramJson = JSON.stringify(da.ruleInterfaceDescription.parameters, null, 4);
+            this.request.param = da.ruleInterfaceDescription.parameters;
           }
         }).catch(function (error) {
           console.log(error);
@@ -334,18 +337,6 @@
     }, mounted() {
       let ruleId = this.$route.query.ruleId;
       this.getPublishRule(ruleId);
-      this.$axios.post("/ruleEngine/rule/ruleInterfaceDescription", {
-        "id": ruleId
-      }).then(res => {
-        let da = res.data;
-        if (da) {
-          this.request.url = da.requestUrl;
-          this.request.paramJson = JSON.stringify(da.parameters, null, 4);
-          this.request.param = da.parameters;
-        }
-      }).catch(function (error) {
-        console.log(error);
-      });
     }
   }
 </script>
