@@ -104,11 +104,6 @@ export default new Router({
           component: SystemSetting
         },
         {
-          path: '/systemLog',
-          name: 'SystemLog',
-          component: SystemLog
-        },
-        {
           path: '/scoreCard',
           name: 'ScoreCard',
           component: ScoreCard
@@ -119,6 +114,11 @@ export default new Router({
           component: DecisionTree
         },
       ]
-    }
+    },
+    {
+      path: '/systemLog',
+      name: 'SystemLog',
+      component: SystemLog
+    },
   ]
 })

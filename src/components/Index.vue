@@ -33,7 +33,7 @@
         </el-row>
       </el-header>
       <el-container>
-        <el-aside width="180px">
+        <el-aside width="200px">
           <el-menu
             router :default-active="$route.path"
             class="el-menu-vertical-aside"
@@ -76,13 +76,15 @@
                 <span>设置</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="/systemLog">系统日志</el-menu-item>
+                <el-menu-item>
+                  <router-link to="/systemLog" target="_blank" style="color: #303133;text-decoration: none">系统日志</router-link>
+                </el-menu-item>
                 <el-menu-item index="/systemSetting">系统设置</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main style="min-width: 1220px">
+        <el-main style="min-width: 1200px">
           <router-view/>
         </el-main>
       </el-container>

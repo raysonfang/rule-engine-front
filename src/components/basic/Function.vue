@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <el-form ref="searchForm" :inline="true" :model="search.form" label-width="40px">
       <el-form-item label="名称" prop="name">
         <el-input v-model="search.form.name"/>
@@ -10,6 +9,9 @@
         <el-button type="reset" @click="reset('searchForm')">重置</el-button>
       </el-form-item>
     </el-form>
+
+    <el-button type="primary" @click="addFunctionForm">新建函数</el-button>
+
 
     <el-dialog title="函数详情" :visible.sync="dialogFormVisible" width="700px">
       <el-form ref="form" :model="form" label-width="80px">
@@ -124,6 +126,9 @@
         },
       }
     }, methods: {
+      addFunctionForm(){
+        alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
+      },
       handleSizeChange(val) {
         this.page.pageSize = val;
         this.list();
