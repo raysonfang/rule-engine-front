@@ -83,6 +83,7 @@
         width="140">
         <template slot-scope="scope">
           <el-button @click="view(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="test(scope.row)" type="text" size="small">测试</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -126,7 +127,7 @@
         },
       }
     }, methods: {
-      addFunctionForm(){
+      addFunctionForm() {
         alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
       },
       handleSizeChange(val) {
@@ -136,7 +137,11 @@
       handleCurrentChange(val) {
         this.page.pageIndex = val;
         this.list();
-      }, view(row) {
+      },
+      test() {
+        alert("暂不支持测试运行");
+      },
+      view(row) {
         this.$axios.post("/ruleEngine/function/get", {
           "id": row.id,
         }).then(res => {
