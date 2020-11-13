@@ -408,6 +408,8 @@
             this.tableData = res.data.rows;
 
             this.page.total = res.data.page.total;
+          } else {
+              this.tableData = [];
           }
           this.loading = false;
         }).catch(function (error) {
