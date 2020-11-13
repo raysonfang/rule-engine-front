@@ -76,11 +76,6 @@
                 <span>设置</span>
               </template>
               <el-menu-item-group>
-
-                <router-link to="/systemLog" target="_blank" style="color: #303133;text-decoration: none">
-                  <el-menu-item>系统日志</el-menu-item>
-                </router-link>
-
                 <el-menu-item index="/systemSetting">系统设置</el-menu-item>
               </el-menu-item-group>
             </el-submenu>

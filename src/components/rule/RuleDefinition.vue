@@ -8,7 +8,7 @@
     <br>
     <br>
 
-    <el-row>
+    <el-row v-loading="loading">
       <el-col :span="6">
         &nbsp;
       </el-col>
@@ -47,73 +47,75 @@
 </template>
 
 <script>
-  export default {
-    name: "RuleDefinition",
-    data() {
-      return {
-        form: {
-          id: null,
-          name: null,
-          code: null,
-          description: null
-        },
-        rules: {
-          name: [
-            {required: true, message: '请输入规则名称', trigger: 'blur'},
-            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
-          ],
-          code: [
-            {required: true, message: '请输入规则Code', trigger: 'blur'},
-            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
-          ],
+    export default {
+        name: "RuleDefinition",
+        data() {
+            return {
+                loading: true,
+                form: {
+                    id: null,
+                    name: null,
+                    code: null,
+                    description: null
+                },
+                rules: {
+                    name: [
+                        {required: true, message: '请输入规则名称', trigger: 'blur'},
+                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+                    ],
+                    code: [
+                        {required: true, message: '请输入规则Code', trigger: 'blur'},
+                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+                    ],
+                }
+            }
+        }, methods: {
+            nextStep() {
+                // 先执行保存
+                this.$refs['form'].validate((valid) => {
+                    if (valid) {
+                        this.$axios.post("/ruleEngine/rule/saveOrUpdateRuleDefinition", {
+                            "id": this.form.id,
+                            "code": this.form.code,
+                            "name": this.form.name,
+                            "description": this.form.description,
+                        }).then(res => {
+                            let da = res.data;
+                            if (da != null) {
+                                this.form.id = da;
+                                this.$router.push({path: '/RuleConfig', query: {ruleId: da}});
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    } else {
+                        console.log('error submit!');
+                        return false;
+                    }
+                });
+            }, getRuleDefinition() {
+                if (this.form.id === undefined) {
+                    return;
+                }
+                this.$axios.post("/ruleEngine/rule/getRuleDefinition", {
+                    "id": this.form.id,
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.form.name = da.name;
+                        this.form.code = da.code;
+                        this.form.description = da.description;
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }, mounted() {
+            this.form.id = this.$route.query.ruleId;
+            this.getRuleDefinition();
         }
-      }
-    }, methods: {
-      nextStep() {
-        // 先执行保存
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            this.$axios.post("/ruleEngine/rule/saveOrUpdateRuleDefinition", {
-              "id": this.form.id,
-              "code": this.form.code,
-              "name": this.form.name,
-              "description": this.form.description,
-            }).then(res => {
-              let da = res.data;
-              if (da != null) {
-                this.form.id = da;
-                this.$router.push({path: '/RuleConfig', query: {ruleId: da}});
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-          } else {
-            console.log('error submit!');
-            return false;
-          }
-        });
-      }, getRuleDefinition() {
-        if (this.form.id === undefined) {
-          return;
-        }
-        this.$axios.post("/ruleEngine/rule/getRuleDefinition", {
-          "id": this.form.id,
-        }).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.form.name = da.name;
-            this.form.code = da.code;
-            this.form.description = da.description;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
-    }, mounted() {
-      this.form.id = this.$route.query.ruleId;
-      this.getRuleDefinition();
     }
-  }
 </script>
 
 <style>

@@ -9,7 +9,7 @@
     <br>
     <br>
 
-    <el-row>
+    <el-row v-loading="loading">
       <el-col :span="6">
 
         <el-card class="box-card" :body-style="{ padding: '28px 12px 0px 12px' }">
@@ -202,143 +202,145 @@
 </template>
 
 <script>
-  export default {
-    name: "RuleViewPublish",
-    data() {
-      return {
-        id: null,
-        name: null,
-        code: null,
-        description: null,
-        request: {
-          url: null,
-          paramJson: null,
-          param: [{
-            name: null,
-            value: null,
-            code: null,
-            valueType: null,
-          }],
-          example: null
-        },
-        runPercentage: 10,
-        conditionGroup: [],
-        action: {
-          value: null,
-          valueName: null,
-          variableValue: null,
-          valueType: null,
-          type: null,
-          loading: false,
-          options: []
-        },
-        runData: {
-          value: null,
-          valueType: null,
-        },
-        runEnd: false,
-        defaultAction: {
-          enableDefaultAction: 1,
-          value: null,
-          valueName: null,
-          variableValue: null,
-          valueType: null,
-          type: null,
-          loading: false,
-          options: [],
-        },
-        abnormalAlarm: {
-          enable: false,
-          email: ''
-        }
-      }
-    }, methods: {
-      runGoBack() {
-        this.runPercentage = 10;
-        this.runEnd = false;
-      },
-      getConditionNamePrefix(type) {
-        if (type === 0) {
-          return "元素";
-        }
-        if (type === 1) {
-          return "变量";
-        }
-        if (type === 2) {
-          return "固定值";
-        }
-      },
-      run() {
-        this.runEnd = false;
-        this.runPercentage = 20;
-        const params = {};
-        this.request.param.forEach((e) => {
-          params[e.code] = e.value === undefined ? '' : e.value;
-        });
-        let requestJson = {
-          "ruleCode": this.code,
-          "param": params
-        };
-        this.runPercentage = 40;
-        this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.runData.value = da.value + "";
-            this.runData.valueType = da.valueType;
-            this.runPercentage = 100;
-            setTimeout(() => {
-              this.runEnd = true;
-              this.runPercentage = 10;
-            }, 1000);
-          } else {
-            this.runPercentage = 10;
-          }
-        }).catch(error => {
-          this.runPercentage = 10;
-          console.log(error);
-        });
-      },
-      getPublishRule(id) {
-        this.$axios.post("/ruleEngine/rule/getPublishRule", {
-          "id": id
-        }).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.id = da.id;
-            this.code = da.code;
-            this.name = da.name;
-            this.description = da.description;
-            // condition group
-            this.conditionGroup = da.conditionGroup;
-            // action
-            this.action.value = da.action.value;
-            this.action.valueName = da.action.valueName;
-            this.action.variableValue = da.action.variableValue;
-
-            // default action
-            if (da.defaultAction !== null) {
-              this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
-              this.defaultAction.value = da.defaultAction.value;
-              this.defaultAction.valueName = da.defaultAction.valueName;
-              this.defaultAction.variableValue = da.defaultAction.variableValue;
+    export default {
+        name: "RuleViewPublish",
+        data() {
+            return {
+                loading: true,
+                id: null,
+                name: null,
+                code: null,
+                description: null,
+                request: {
+                    url: null,
+                    paramJson: null,
+                    param: [{
+                        name: null,
+                        value: null,
+                        code: null,
+                        valueType: null,
+                    }],
+                    example: null
+                },
+                runPercentage: 10,
+                conditionGroup: [],
+                action: {
+                    value: null,
+                    valueName: null,
+                    variableValue: null,
+                    valueType: null,
+                    type: null,
+                    loading: false,
+                    options: []
+                },
+                runData: {
+                    value: null,
+                    valueType: null,
+                },
+                runEnd: false,
+                defaultAction: {
+                    enableDefaultAction: 1,
+                    value: null,
+                    valueName: null,
+                    variableValue: null,
+                    valueType: null,
+                    type: null,
+                    loading: false,
+                    options: [],
+                },
+                abnormalAlarm: {
+                    enable: false,
+                    email: ''
+                }
             }
-            this.abnormalAlarm = {
-              "enable": da.abnormalAlarm.enable,
-              "email": da.abnormalAlarm.email.join(',')
-            };
-            this.request.url = da.ruleInterfaceDescription.requestUrl;
-            this.request.paramJson = JSON.stringify(da.ruleInterfaceDescription.parameters, null, 4);
-            this.request.param = da.ruleInterfaceDescription.parameters;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
-    }, mounted() {
-      let ruleId = this.$route.query.ruleId;
-      this.getPublishRule(ruleId);
+        }, methods: {
+            runGoBack() {
+                this.runPercentage = 10;
+                this.runEnd = false;
+            },
+            getConditionNamePrefix(type) {
+                if (type === 0) {
+                    return "元素";
+                }
+                if (type === 1) {
+                    return "变量";
+                }
+                if (type === 2) {
+                    return "固定值";
+                }
+            },
+            run() {
+                this.runEnd = false;
+                this.runPercentage = 20;
+                const params = {};
+                this.request.param.forEach((e) => {
+                    params[e.code] = e.value === undefined ? '' : e.value;
+                });
+                let requestJson = {
+                    "ruleCode": this.code,
+                    "param": params
+                };
+                this.runPercentage = 40;
+                this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.runData.value = da.value + "";
+                        this.runData.valueType = da.valueType;
+                        this.runPercentage = 100;
+                        setTimeout(() => {
+                            this.runEnd = true;
+                            this.runPercentage = 10;
+                        }, 1000);
+                    } else {
+                        this.runPercentage = 10;
+                    }
+                }).catch(error => {
+                    this.runPercentage = 10;
+                    console.log(error);
+                });
+            },
+            getPublishRule(id) {
+                this.$axios.post("/ruleEngine/rule/getPublishRule", {
+                    "id": id
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.id = da.id;
+                        this.code = da.code;
+                        this.name = da.name;
+                        this.description = da.description;
+                        // condition group
+                        this.conditionGroup = da.conditionGroup;
+                        // action
+                        this.action.value = da.action.value;
+                        this.action.valueName = da.action.valueName;
+                        this.action.variableValue = da.action.variableValue;
+
+                        // default action
+                        if (da.defaultAction !== null) {
+                            this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
+                            this.defaultAction.value = da.defaultAction.value;
+                            this.defaultAction.valueName = da.defaultAction.valueName;
+                            this.defaultAction.variableValue = da.defaultAction.variableValue;
+                        }
+                        this.abnormalAlarm = {
+                            "enable": da.abnormalAlarm.enable,
+                            "email": da.abnormalAlarm.email.join(',')
+                        };
+                        this.request.url = da.ruleInterfaceDescription.requestUrl;
+                        this.request.paramJson = JSON.stringify(da.ruleInterfaceDescription.parameters, null, 4);
+                        this.request.param = da.ruleInterfaceDescription.parameters;
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }, mounted() {
+            let ruleId = this.$route.query.ruleId;
+            this.getPublishRule(ruleId);
+        }
     }
-  }
 </script>
 <style>
   .el-input-number .el-input__inner {
