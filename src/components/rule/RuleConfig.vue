@@ -606,11 +606,15 @@
                 }
             },
             addConditionGroup() {
-                let length = this.conditionGroup.length;
-                let conditionGroupElement = this.conditionGroup[length - 1];
                 let newOrderNo = 1;
-                if (conditionGroupElement !== undefined) {
-                    newOrderNo = conditionGroupElement.orderNo + 1;
+                if (this.conditionGroup != null) {
+                    let length = this.conditionGroup.length;
+                    let conditionGroupElement = this.conditionGroup[length - 1];
+                    if (conditionGroupElement !== undefined) {
+                        newOrderNo = conditionGroupElement.orderNo + 1;
+                    }
+                } else {
+                    this.conditionGroup = [];
                 }
                 let newConditionGroup = {
                     id: null,
