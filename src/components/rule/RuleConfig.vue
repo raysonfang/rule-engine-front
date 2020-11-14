@@ -331,7 +331,7 @@
         name: "RuleConfig",
         data() {
             return {
-                loading: true,
+                loading: false,
                 id: null,
                 name: null,
                 code: null,
@@ -720,9 +720,7 @@
                 return value.uuid;
             },
             getRuleConfig() {
-                if (this.id === undefined) {
-                    return;
-                }
+                this.loading = true;
                 this.$axios.post("/ruleEngine/rule/getRuleConfig", {
                     "id": this.id
                 }).then(res => {
@@ -735,10 +733,12 @@
                         // condition group
                         this.conditionGroup = da.conditionGroup;
                         // action
-                        this.action.type = this.getType(da.action.type, da.action.valueType);
-                        this.action.value = da.action.value;
-                        this.action.valueName = da.action.valueName;
-                        this.action.valueType = da.action.valueType;
+                        if (da.action != null) {
+                            this.action.type = this.getType(da.action.type, da.action.valueType);
+                            this.action.value = da.action.value;
+                            this.action.valueName = da.action.valueName;
+                            this.action.valueType = da.action.valueType;
+                        }
                         if (da.defaultAction != null) {
                             // default action
                             this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
@@ -747,9 +747,11 @@
                             this.defaultAction.valueName = da.defaultAction.valueName;
                             this.defaultAction.valueType = da.defaultAction.valueType;
                         }
-                        this.abnormalAlarm = {
-                            "enable": da.abnormalAlarm.enable,
-                            "email": da.abnormalAlarm.email.join(',')
+                        if (da.abnormalAlarm != null) {
+                            this.abnormalAlarm = {
+                                "enable": da.abnormalAlarm.enable,
+                                "email": da.abnormalAlarm.email.join(',')
+                            }
                         }
                     }
                     this.loading = false;

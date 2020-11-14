@@ -196,7 +196,7 @@
         name: "RuleViewAndTest",
         data() {
             return {
-                loading: true,
+                loading: false,
                 id: null,
                 name: null,
                 code: null,
@@ -308,6 +308,7 @@
                 });
             },
             getRuleView(id) {
+                this.loading = true;
                 this.$axios.post("/ruleEngine/rule/getViewRule", {
                     "id": id
                 }).then(res => {

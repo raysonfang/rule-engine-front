@@ -206,7 +206,7 @@
         name: "RuleViewPublish",
         data() {
             return {
-                loading: true,
+                loading: false,
                 id: null,
                 name: null,
                 code: null,
@@ -300,6 +300,7 @@
                 });
             },
             getPublishRule(id) {
+                this.loading = true;
                 this.$axios.post("/ruleEngine/rule/getPublishRule", {
                     "id": id
                 }).then(res => {
