@@ -51,7 +51,7 @@
         name: "RuleDefinition",
         data() {
             return {
-                loading: true,
+                loading: false,
                 form: {
                     id: null,
                     name: null,
@@ -97,6 +97,7 @@
                 if (this.form.id === undefined) {
                     return;
                 }
+                this.loading = true;
                 this.$axios.post("/ruleEngine/rule/getRuleDefinition", {
                     "id": this.form.id,
                 }).then(res => {
