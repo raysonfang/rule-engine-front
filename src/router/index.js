@@ -18,7 +18,6 @@ import RuleViewPublish from '@/components/rule/RuleViewPublish.vue'
 import RuleDefinition from '@/components/rule/RuleDefinition.vue'
 
 import SystemSetting from '@/components/setting/SystemSetting.vue'
-import SystemLog from '@/components/setting/SystemLog.vue'
 
 import ScoreCard from '@/components/score/ScoreCard.vue'
 
@@ -114,11 +113,6 @@ export default new Router({
           component: DecisionTree
         },
       ]
-    },
-    {
-      path: '/systemLog',
-      name: 'SystemLog',
-      component: SystemLog
-    },
+    }
   ]
 })
