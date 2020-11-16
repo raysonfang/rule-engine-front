@@ -1,21 +1,20 @@
-# rule-engine-front
+# 📌 规则引擎前端 RuleEngine 📌
 
-> A Vue.js project
+前端写的不够优秀刚刚开放，见笑，欢迎有能力的大神合作开发！
 
-## Build Setup
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![GitHub Stars](https://img.shields.io/github/stars/DingQianWen/rule-engine)](https://github.com/DingQianWen/rule-engine/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/DingQianWen/rule-engine)](https://github.com/DingQianWen/rule-engine/fork)
+[![GitHub issues](https://img.shields.io/github/issues/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/DingQianWen/rule-engine.svg)](https://github.com/DingQianWen/rule-engine/issues "Percentage of issues still open")
 
-``` bash
-# install dependencies
-npm install
+#### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
-# serve with hot reload at localhost:8080
-npm run dev
 
-# build for production with minification
-npm run build
+项目展示地址：http://ruleengine.cn/   
+申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
+### 技术文档
+简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+### 如果觉得本项目对您有任何一点帮助，请点右上角 "Star" 支持一下， 并向您的基友、同事们宣传一下吧，谢谢！
