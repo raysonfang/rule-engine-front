@@ -16,7 +16,7 @@
 
     <el-button type="primary" @click="addElementForm">新建元素</el-button>
 
-    <el-dialog :title="form.id===undefined?'新建元素':'更新元素'" :visible.sync="dialogFormVisible" width="700px">
+    <el-dialog :title="form.id===null?'新建元素':'更新元素'" :visible.sync="dialogFormVisible" width="700px">
       <el-form ref="saveOrUpdateForm" :rules="rules" :model="form" label-width="80px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name"/>

@@ -45,6 +45,77 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="函数测试" :visible.sync="run.dialogFormVisible" width="700px">
+      <el-form ref="runAddForm" :rules="run.rules" :model="run.form" label-width="80px">
+
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="run.form.name" :disabled="true"/>
+        </el-form-item>
+
+        <el-form-item label="返回类型">
+          <el-select :value="run.form.returnValueType" :disabled="true">
+            <el-option label="布尔" value="BOOLEAN"/>
+            <el-option label="集合" value="COLLECTION"/>
+            <el-option label="字符串" value="STRING"/>
+            <el-option label="数值" value="NUMBER"/>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="函数参数" v-if="run.form.function.paramValues.length!==0">
+
+          <el-col :span="3" style="margin-top: 26px;">
+            <el-form-item v-for="pv in run.form.function.paramValues" :key="pv.code"
+                          style="text-align: right;margin-right:10px;margin-top: 19px;overflow: hidden;white-space: nowrap;">
+              {{pv.name!==null?pv.name:pv.code}}
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;"
+                          :key="pv.code"
+                          :prop="'function.paramValues.' + index + '.type'"
+                          :rules="{ required: true, message: '类型不能为空', trigger: ['blur', 'change'] }">
+              <el-select v-model="pv.type">
+                <el-option label="字符串" :value="5" v-if="pv.valueType==='STRING'"/>
+                <el-option label="布尔" :value="6" v-else-if="pv.valueType==='BOOLEAN'"/>
+                <el-option label="数值" :value="7" v-else-if="pv.valueType==='NUMBER'"/>
+                <el-option label="集合" :value="8" v-else-if="pv.valueType==='COLLECTION'"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="1"> &nbsp;</el-col>
+
+          <el-col :span="13" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;"
+                          :key="pv.code"
+                          :prop="'function.paramValues.' + index + '.value'"
+                          :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
+              <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据 ">
+                <el-option label="true" value="true"/>
+                <el-option label="false" value="false"/>
+              </el-select>
+              <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
+                               :max="10000000000000" style="width: 100%"/>
+              <el-input v-else v-model="pv.value"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            &nbsp;
+          </el-col>
+        </el-form-item>
+        <br>
+        <el-form-item label="输出">
+          <el-input type="textarea" v-model="run.form.output"/>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="run.dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="exe('runForm')">运行</el-button>
+      </div>
+
+    </el-dialog>
 
     <el-table
       v-loading="loading"
@@ -101,96 +172,128 @@
 </template>
 
 <script>
-  export default {
-    name: "Function",
-    data() {
-      return {
-        search: {
-          form: {
-            name: null
-          }
-        },
-        dialogFormVisible: false,
-        form: {
-          name: null,
-          returnValueType: null,
-          description: null,
-          executor: null,
-          paramsJson: null
-        },
-        tableData: [],
-        loading: true,
-        page: {
-          pageIndex: 1,
-          pageSize: 10,
-          total: 0
-        },
-      }
-    }, methods: {
-      addFunctionForm() {
-        alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
-      },
-      handleSizeChange(val) {
-        this.page.pageSize = val;
-        this.list();
-      },
-      handleCurrentChange(val) {
-        this.page.pageIndex = val;
-        this.list();
-      },
-      test() {
-        alert("暂不支持测试运行");
-      },
-      view(row) {
-        this.$axios.post("/ruleEngine/function/get", {
-          "id": row.id,
-        }).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.form = da;
-            this.form.paramsJson = JSON.stringify(da.params, null, 4);
-
-            this.dialogFormVisible = true;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      reset(formName) {
-        this.$refs[formName].resetFields();
-        this.list();
-      },
-      list() {
-        this.loading = true;
-        this.$axios.post("/ruleEngine/function/list", {
-          "page": {
-            "pageSize": this.page.pageSize,
-            "pageIndex": this.page.pageIndex
-          },
-          "query": this.search.form,
-          "orders": [
-            {
-              "columnName": "id",
-              "desc": true
+    export default {
+        name: "Function",
+        data() {
+            return {
+                run: {
+                    dialogFormVisible: false,
+                    form: {
+                        id: null,
+                        name: null,
+                        function: {
+                            paramValues: []
+                        },
+                        returnValueType: null,
+                        output: null
+                    }
+                },
+                search: {
+                    form: {
+                        name: null
+                    }
+                },
+                dialogFormVisible: false,
+                form: {
+                    name: null,
+                    returnValueType: null,
+                    description: null,
+                    executor: null,
+                    paramsJson: null
+                },
+                tableData: [],
+                loading: true,
+                page: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    total: 0
+                },
             }
-          ]
-        }).then(res => {
-          if (res.data != null) {
-            this.tableData = res.data.rows;
+        }, methods: {
+            exe() {
+                this.$axios.post("/ruleEngine/function/run", {
+                    "id": this.run.form.id,
+                    "paramValues": this.run.form.function.paramValues
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.run.form.output = da;
+                    } else {
+                        this.run.form.output = null;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            addFunctionForm() {
+                alert("内测阶段，存在恶意代码安全问题，暂不对外开放，敬请期待！");
+            },
+            handleSizeChange(val) {
+                this.page.pageSize = val;
+                this.list();
+            },
+            handleCurrentChange(val) {
+                this.page.pageIndex = val;
+                this.list();
+            },
+            test(row) {
+                this.run.form.returnValueType = row.returnValueType;
+                this.run.form.id = row.id;
+                this.run.form.name = row.name;
+                this.run.form.function.paramValues = row.params;
+                this.run.dialogFormVisible = true;
+                this.run.form.output = null;
+            },
+            view(row) {
+                this.$axios.post("/ruleEngine/function/get", {
+                    "id": row.id,
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.form = da;
+                        this.form.paramsJson = JSON.stringify(da.params, null, 4);
 
-            this.page.total = res.data.page.total;
-          } else {
-              this.tableData = [];
-          }
-          this.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
-    }, mounted() {
-      this.list();
+                        this.dialogFormVisible = true;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            reset(formName) {
+                this.$refs[formName].resetFields();
+                this.list();
+            },
+            list() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/function/list", {
+                    "page": {
+                        "pageSize": this.page.pageSize,
+                        "pageIndex": this.page.pageIndex
+                    },
+                    "query": this.search.form,
+                    "orders": [
+                        {
+                            "columnName": "id",
+                            "desc": true
+                        }
+                    ]
+                }).then(res => {
+                    if (res.data != null) {
+                        this.tableData = res.data.rows;
+
+                        this.page.total = res.data.page.total;
+                    } else {
+                        this.tableData = [];
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        }, mounted() {
+            this.list();
+        }
     }
-  }
 </script>
 
 <style scoped>
