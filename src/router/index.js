@@ -5,6 +5,7 @@ import Home from '@/components/Home'
 
 import Login from '@/components/Login.vue'
 import Page500 from '@/components/500.vue'
+import Page404 from '@/components/404.vue'
 
 import Condition from '@/components/basic/Condition'
 import Element from '@/components/basic/Element.vue'
@@ -36,11 +37,6 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-    },
-    {
-      path: '/500',
-      name: 'Page500',
-      component: Page500,
     },
     {
       path: '/',
@@ -113,6 +109,16 @@ export default new Router({
           component: DecisionTree
         },
       ]
+    },
+    {
+      path: '/500',
+      name: 'Page500',
+      component: Page500,
+    },
+    {
+      path: '*',
+      name: 'Page404',
+      component: Page404
     }
   ]
 })
