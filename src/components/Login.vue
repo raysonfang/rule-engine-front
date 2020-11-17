@@ -43,6 +43,15 @@
         </el-form-item>
       </el-form>
     </div>
+
+    <div style="color: #999;
+            position: absolute;
+            height: 40px;
+            bottom:0;
+            font: 14px/2em Microsoft Yahei,tahoma,HELVETICA;
+            width:100%;
+            text-align:center;">Copyright © 2020 规则引擎(ruleengine.cn), All Rights Reserved.
+    </div>
   </div>
 </template>
 
@@ -94,7 +103,6 @@
   .login-container {
     margin-top: 6%;
     width: 100%;
-    height: 100%;
     /* 登录框上下对齐 */
     display: flex;
     align-items: center;
