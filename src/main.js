@@ -3,6 +3,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import router from '@/router';
 import axios from 'axios';
+import userApi from '@/api/userApi';
 
 
 import App from './App.vue';
@@ -11,11 +12,14 @@ Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 
+// api
+Vue.prototype.$userApi = userApi;
+
 //默认头像
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";
 
 //请求后端服务器接口前缀
-const requestBaseURL = "http://localhost:8010/";
+const requestBaseURL = "http://49.234.81.14:8010/";
 Vue.prototype.$requestBaseURL = requestBaseURL;
 
 //axios配置

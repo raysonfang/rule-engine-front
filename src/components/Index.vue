@@ -99,41 +99,36 @@
             }
         },
         created() {
-            this.$axios
-                .post("/user/getUserInfo")
-                .then(res => {
-                    let data = res.data;
-                    if (data != null) {
-                        this.username = data.username;
-                        //this.avatar = data.avatarUrl;
-                        sessionStorage.setItem('user', JSON.stringify(data));
-                    } else {
-                        this.$message({
-                            showClose: true,
-                            message: '请先登陆',
-                            type: 'warning'
-                        });
-                        this.$router.push({path: '/login'});
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            this.$userApi.getUserInfo().then(res => {
+                let data = res.data;
+                if (data != null) {
+                    this.username = data.username;
+                    //this.avatar = data.avatarUrl;
+                    sessionStorage.setItem('user', JSON.stringify(data));
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '请先登陆',
+                        type: 'warning'
+                    });
+                    this.$router.push({path: '/login'});
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
         methods: {
             rightHandleCommand(command) {
                 if (command === 'logout') {
-                    this.$axios.post("/user/logout")
-                        .then(res => {
-                            if (res.data) {
-                                localStorage.removeItem('token');
-                                sessionStorage.removeItem('user');
-                                this.$router.push({path: '/login'});
-                            }
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                    this.$userApi.logout().then(res => {
+                        if (res.data) {
+                            localStorage.removeItem('token');
+                            sessionStorage.removeItem('user');
+                            this.$router.push({path: '/login'});
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
                 } else if (command === "userInfo") {
                 }
             },

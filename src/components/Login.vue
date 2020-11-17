@@ -47,52 +47,46 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        logining: false,
-        ruleForm: {
-          username: '',
-          password: '',
-        },
-        rules: {
-          username: [{required: true, message: '请输入账号', trigger: 'blur'}],
-          password: [{required: true, message: '请输入密码', trigger: 'blur'}]
-        },
-        checked: false
-      }
-    },
-    methods: {
-      handleSubmit(event) {
-        this.$refs.ruleForm.validate((valid) => {
-            if (valid) {
-              this.logining = true;
-              this.$axios
-                .post("/user/login",
-                  {
-                    "username": this.ruleForm.username,
-                    "password": this.ruleForm.password
-                  })
-                .then(res => {
-                  if (res.data) {
-                    this.$router.push({path: '/'});
-                  } else {
-                    let message = res.data.message;
-                    this.logining = false;
-                    this.$alert(message, '提示', {
-                      confirmButtonText: 'ok'
-                    })
-                  }
-                  this.logining = false;
-                }).catch(error => {
-                this.logining = false;
-              });
+    export default {
+        data() {
+            return {
+                logining: false,
+                ruleForm: {
+                    username: '',
+                    password: '',
+                },
+                rules: {
+                    username: [{required: true, message: '请输入账号', trigger: 'blur'}],
+                    password: [{required: true, message: '请输入密码', trigger: 'blur'}]
+                },
+                checked: false
             }
-          }
-        )
-      }
+        },
+        methods: {
+            handleSubmit(event) {
+                this.$refs.ruleForm.validate((valid) => {
+                        if (valid) {
+                            this.logining = true;
+                            this.$userApi.login(this.ruleForm).then(res => {
+                                if (res.data) {
+                                    this.$router.push({path: '/'});
+                                } else {
+                                    let message = res.data.message;
+                                    this.logining = false;
+                                    this.$alert(message, '提示', {
+                                        confirmButtonText: 'ok'
+                                    })
+                                }
+                                this.logining = false;
+                            }).catch(error => {
+                                this.logining = false;
+                            });
+                        }
+                    }
+                )
+            }
+        }
     }
-  }
 </script>
 
 <style scoped>
