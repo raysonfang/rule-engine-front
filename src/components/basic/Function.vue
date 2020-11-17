@@ -71,11 +71,8 @@
           </el-col>
 
           <el-col :span="4" style="margin-top: 26px">
-            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;"
-                          :key="pv.code"
-                          :prop="'function.paramValues.' + index + '.type'"
-                          :rules="{ required: true, message: '类型不能为空', trigger: ['blur', 'change'] }">
-              <el-select v-model="pv.type">
+            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;" :key="pv.code">
+              <el-select v-model="pv.valueType" :disabled="true">
                 <el-option label="字符串" :value="5" v-if="pv.valueType==='STRING'"/>
                 <el-option label="布尔" :value="6" v-else-if="pv.valueType==='BOOLEAN'"/>
                 <el-option label="数值" :value="7" v-else-if="pv.valueType==='NUMBER'"/>
@@ -91,11 +88,11 @@
                           :key="pv.code"
                           :prop="'function.paramValues.' + index + '.value'"
                           :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
-              <el-select v-if="pv.type===6" v-model="pv.value" placeholder="请选择数据 ">
+              <el-select v-if="pv.valueType==='BOOLEAN'" v-model="pv.value" placeholder="请选择数据 ">
                 <el-option label="true" value="true"/>
                 <el-option label="false" value="false"/>
               </el-select>
-              <el-input-number v-else-if="pv.type===7" v-model="pv.value" :controls="false"
+              <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
                                :max="10000000000000" style="width: 100%"/>
               <el-input v-else v-model="pv.value"/>
             </el-form-item>
@@ -237,12 +234,24 @@
                 this.list();
             },
             test(row) {
+                this.clearValidate();
                 this.run.form.returnValueType = row.returnValueType;
                 this.run.form.id = row.id;
                 this.run.form.name = row.name;
-                this.run.form.function.paramValues = row.params;
+                this.run.form.function.paramValues = Array.from(row.params).map(m => ({
+                    "code": m.code,
+                    "name": m.name,
+                    "value": undefined,
+                    "valueType": m.valueType,
+                }));
                 this.run.dialogFormVisible = true;
                 this.run.form.output = null;
+            },
+            clearValidate() {
+                let ref = this.$refs['runAddForm'];
+                if (ref != null) {
+                    ref.clearValidate();
+                }
             },
             view(row) {
                 this.$axios.post("/ruleEngine/function/get", {
@@ -295,7 +304,11 @@
         }
     }
 </script>
-
+<style>
+  .el-input-number .el-input__inner {
+    text-align: left;
+  }
+</style>
 <style scoped>
 
 </style>

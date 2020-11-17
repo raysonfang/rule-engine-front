@@ -15,7 +15,7 @@ Vue.config.productionTip = false;
 Vue.prototype.$defaultAvatar = "/static/avatar.jpg";
 
 //请求后端服务器接口前缀
-const requestBaseURL = "http://49.234.81.14:8010/";
+const requestBaseURL = "http://localhost:8010/";
 Vue.prototype.$requestBaseURL = requestBaseURL;
 
 //axios配置
@@ -26,6 +26,8 @@ axios.defaults.baseURL = requestBaseURL;
 
 // 请求之前
 axios.interceptors.request.use(config => {
+  // 请求时携带此token
+  config.headers['token'] = localStorage.getItem("token");
   return config;
 }, error => {
   // 请求错误
@@ -33,18 +35,22 @@ axios.interceptors.request.use(config => {
 });
 //服务器响应
 axios.interceptors.response.use(response => {
+  let token = response.headers.token;
+  if (token != null) {
+    localStorage.setItem("token", token)
+  }
   let data = response.data;
   let code = data.code;
   let message = data.message;
   if (code === 200) {
     return data;
-  } else if (code === 4009||code===10010004||code===99990402||code===10011039) {
+  } else if (code === 4009 || code === 10010004 || code === 99990402 || code === 10011039) {
     router.push({path: '/login'});
     ElementUI.Message({
       type: 'warning',
       message: message
     });
-  }else {
+  } else {
     ElementUI.Message({
       type: 'error',
       message: message
