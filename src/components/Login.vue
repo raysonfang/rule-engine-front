@@ -45,11 +45,11 @@
     </div>
 
     <div style="color: #999;
-            position: absolute;
+            margin-top: 15%;
             height: 40px;
             bottom:0;
             font: 14px/2em Microsoft Yahei,tahoma,HELVETICA;
-            width:100%;
+            width: 100%;
             text-align:center;">Copyright © 2020 规则引擎(ruleengine.cn), All Rights Reserved.
     </div>
   </div>
