@@ -105,102 +105,114 @@
 
 <script>
 
-  export default {
-    name: "Rule",
-    data() {
-      return {
-        tableData: [],
-        loading: true,
-        page: {
-          pageIndex: 1,
-          pageSize: 10,
-          total: 0
-        },
-        search: {
-          form: {
-            name: null,//根据规则名称搜索
-            code: null,
-            status: null//规则状态搜索 编辑中，已发布，待发布规则
-          }
-        },
-      }
-    }, methods: {
-      reset(formName) {
-        this.search.form.status = null;
-        this.$refs[formName].resetFields();
-        this.list();
-      }, handleSizeChange(val) {
-        this.page.pageSize = val;
-        this.list();
-      },
-      handleCurrentChange(val) {
-        this.page.pageIndex = val;
-        this.list();
-      },
-      edit(row) {
-        // 可执行｜已发布
-        if (row.status === 1 || row.status === 2) {
-          this.$router.push({path: '/RuleViewAndTest', query: {ruleId: row.id}});
-          return;
-        }
-        this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
-      },
-      show(row) {
-        this.$router.push({path: '/RuleViewPublish', query: {ruleId: row.id}});
-      },
-      deleteRow(row) {
-        this.$axios.post("/ruleEngine/rule/delete", {
-          "id": row.id
-        }).then(res => {
-          let da = res.data;
-          if (da) {
-            this.$message({
-              showClose: true,
-              message: '删除成功',
-              type: 'success'
-            });
-            this.list();
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }, list() {
-        this.loading = true;
-        this.$axios.post("/ruleEngine/rule/list", {
-          "page": {
-            "pageSize": this.page.pageSize,
-            "pageIndex": this.page.pageIndex
-          },
-          "query": {
-            "name": this.search.form.name,
-            "code": this.search.form.code,
-            "status": this.search.form.status,
-          },
-          "orders": [
-            {
-              "columnName": "id",
-              "desc": true
+    export default {
+        name: "Rule",
+        data() {
+            return {
+                tableData: [],
+                loading: true,
+                page: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    total: 0
+                },
+                search: {
+                    form: {
+                        name: null,//根据规则名称搜索
+                        code: null,
+                        status: null//规则状态搜索 编辑中，已发布，待发布规则
+                    }
+                },
             }
-          ]
-        }).then(res => {
-          if (res.data != null) {
-            this.tableData = res.data.rows;
+        }, methods: {
+            reset(formName) {
+                this.search.form.status = null;
+                this.$refs[formName].resetFields();
+                this.list();
+            }, handleSizeChange(val) {
+                this.page.pageSize = val;
+                this.list();
+            },
+            handleCurrentChange(val) {
+                this.page.pageIndex = val;
+                this.list();
+            },
+            edit(row) {
+                // 可执行｜已发布
+                if (row.status === 1 || row.status === 2) {
+                    this.$router.push({path: '/RuleViewAndTest', query: {ruleId: row.id}});
+                    return;
+                }
+                this.$router.push({path: '/RuleConfig', query: {ruleId: row.id}});
+            },
+            show(row) {
+                this.$router.push({path: '/RuleViewPublish', query: {ruleId: row.id}});
+            },
+            deleteRow(row) {
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post("/ruleEngine/rule/delete", {
+                        "id": row.id
+                    }).then(res => {
+                        let da = res.data;
+                        if (da) {
+                            this.$message({
+                                showClose: true,
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.list();
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            list() {
+                this.loading = true;
+                this.$axios.post("/ruleEngine/rule/list", {
+                    "page": {
+                        "pageSize": this.page.pageSize,
+                        "pageIndex": this.page.pageIndex
+                    },
+                    "query": {
+                        "name": this.search.form.name,
+                        "code": this.search.form.code,
+                        "status": this.search.form.status,
+                    },
+                    "orders": [
+                        {
+                            "columnName": "id",
+                            "desc": true
+                        }
+                    ]
+                }).then(res => {
+                    if (res.data != null) {
+                        this.tableData = res.data.rows;
 
-            this.page.total = res.data.page.total;
-          } else {
-              this.tableData = [];
-          }
-          this.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }, createRule() {
-        this.$router.push("/RuleDefinition")
-      }
-    }, mounted() {
-      this.list();
+                        this.page.total = res.data.page.total;
+                    } else {
+                        this.tableData = [];
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }, createRule() {
+                this.$router.push("/RuleDefinition")
+            }
+        }, mounted() {
+            this.list();
+        }
     }
-  }
 </script>
 
 <style scoped>

@@ -216,373 +216,384 @@
 </template>
 
 <script>
-  export default {
-    name: "Condition",
-    data() {
-      return {
-        tableData: [],
-        loading: true,
-        page: {
-          pageIndex: 1,
-          pageSize: 10,
-          total: 0
-        },
-        search: {
-          form: {
-            name: null,
-          }
-        },
-        dialogFormVisible: false,
-        form: {
-          id: null,
-          name: null,
-          config: {
-            leftValue: {
-              value: undefined,
-              valueName: null,
-              valueType: null,
-              type: null,
-            },
-            symbol: null,
-            rightValue: {
-              value: undefined,
-              valueName: null,
-              valueType: null,
-              type: null,
-            }
-          },
-          description: null,
-        },
-        rules: {
-          name: [
-            {required: true, message: '请输入条件名称', trigger: ['blur']},
-            {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: ['blur']}
-          ],
-          config: {
-            leftValue: {
-              type: [
-                {required: true, message: '请选择类型', trigger: ['blur']},
-              ],
-              value: [
-                {required: true, message: '值不能为空', trigger: ['blur']},
-              ],
-            },
-            symbol: [
-              {required: true, message: '请选择运算符', trigger: ['blur']}
-            ],
-            rightValue: {
-              type: [
-                {required: true, message: '请选择类型', trigger: ['blur']},
-              ],
-              value: [
-                {required: true, message: '值不能为空', trigger: ['blur']},
-              ],
-            }
-          }
-        },
-        leftSelect: {
-          loading: false,
-          options: [],
-          query: {
-            name: null,
-          }
-        },
-        rightSelect: {
-          loading: false,
-          options: [],
-          query: {
-            name: null,
-          }
-        },
-        symbolSelect: {
-          options: [],
-        }
-      }
-    },
-    methods: {
-      clearValidate() {
-        let ref = this.$refs['addForm'];
-        if (ref != null) {
-          ref.clearValidate()
-        }
-      },
-      addConditionForm() {
-        this.clearValidate();
-        this.form = {
-          id: null,
-          name: null,
-          config: {
-            leftValue: {
-              value: undefined,
-              valueName: null,
-              valueType: null,
-              type: null,
-            },
-            symbol: null,
-            rightValue: {
-              value: undefined,
-              valueName: null,
-              valueType: null,
-              type: null,
-            }
-          },
-          description: null,
-        };
-        this.dialogFormVisible = true;
-      },
-      isRightTypeSelectView(valueType) {
-        if (this.form.config.leftValue.valueType === null) {
-          return false;
-        }
-        if (this.form.config.leftValue.valueType === valueType) {
-          return true;
-        }
-        // 如果左值为集合时
-        if (this.form.config.leftValue.valueType === 'COLLECTION') {
-          if (this.form.config.symbol === null) {
-            return true;
-          }
-          // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
-          return this.form.config.symbol === 'CONTAIN' || this.form.config.symbol === 'NOT_CONTAIN';
-        }
-      },
-      leftValueChange() {
-        //左面发生改变，右边也改变
-        this.form.config.symbol = '';
-        this.form.config.rightValue.value = undefined;
-        this.form.config.rightValue.valueName = '';
-        this.form.config.rightValue.type = '';
-        this.rightSelect.options = [];
-      },
-      leftValueTypeChange() {
-        this.form.config.leftValue.value = undefined;
-        this.form.config.leftValue.valueName = '';
-        // 如果是变量或者元素
-        if (this.form.config.leftValue.type === 1 || this.form.config.leftValue.type === 0) {
-          this.form.config.leftValue.valueType = null;
-        }
-        this.leftSelect.options = [];
-        this.form.config.symbol = '';
-        //左面发生改变，右边也改变
-        this.form.config.rightValue.value = undefined;
-        this.form.config.rightValue.valueName = '';
-        this.form.config.rightValue.type = '';
-        this.rightSelect.options = [];
-      },
-      rightValueTypeChange() {
-        this.form.config.rightValue.value = undefined;
-        this.form.config.rightValue.valueName = '';
-        this.rightSelect.options = [];
-      },
-      saveOrUpdate(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$axios.post(this.form.id === null ? "/ruleEngine/condition/add" : "/ruleEngine/condition/update", {
-              "id": this.form.id,
-              "name": this.form.name,
-              "description": this.form.description,
-              "config": {
-                "leftValue": {
-                  "value": this.form.config.leftValue.value,
-                  "valueType": this.getValueType(this.form.config.leftValue.type, this.form.config.leftValue.valueType),
-                  "type": this.form.config.leftValue.type >= 5 ? 2 : this.form.config.leftValue.type,
+    export default {
+        name: "Condition",
+        data() {
+            return {
+                tableData: [],
+                loading: true,
+                page: {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    total: 0
                 },
-                "symbol": this.form.config.symbol,
-                "rightValue": {
-                  "value": this.form.config.rightValue.value,
-                  "valueType": this.getValueType(this.form.config.rightValue.type, this.form.config.rightValue.valueType),
-                  "type": this.form.config.rightValue.type >= 5 ? 2 : this.form.config.rightValue.type,
+                search: {
+                    form: {
+                        name: null,
+                    }
+                },
+                dialogFormVisible: false,
+                form: {
+                    id: null,
+                    name: null,
+                    config: {
+                        leftValue: {
+                            value: undefined,
+                            valueName: null,
+                            valueType: null,
+                            type: null,
+                        },
+                        symbol: null,
+                        rightValue: {
+                            value: undefined,
+                            valueName: null,
+                            valueType: null,
+                            type: null,
+                        }
+                    },
+                    description: null,
+                },
+                rules: {
+                    name: [
+                        {required: true, message: '请输入条件名称', trigger: ['blur']},
+                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: ['blur']}
+                    ],
+                    config: {
+                        leftValue: {
+                            type: [
+                                {required: true, message: '请选择类型', trigger: ['blur']},
+                            ],
+                            value: [
+                                {required: true, message: '值不能为空', trigger: ['blur']},
+                            ],
+                        },
+                        symbol: [
+                            {required: true, message: '请选择运算符', trigger: ['blur']}
+                        ],
+                        rightValue: {
+                            type: [
+                                {required: true, message: '请选择类型', trigger: ['blur']},
+                            ],
+                            value: [
+                                {required: true, message: '值不能为空', trigger: ['blur']},
+                            ],
+                        }
+                    }
+                },
+                leftSelect: {
+                    loading: false,
+                    options: [],
+                    query: {
+                        name: null,
+                    }
+                },
+                rightSelect: {
+                    loading: false,
+                    options: [],
+                    query: {
+                        name: null,
+                    }
+                },
+                symbolSelect: {
+                    options: [],
                 }
-              }
-            }).then(res => {
-              if (res) {
+            }
+        },
+        methods: {
+            clearValidate() {
+                let ref = this.$refs['addForm'];
+                if (ref != null) {
+                    ref.clearValidate()
+                }
+            },
+            addConditionForm() {
+                this.clearValidate();
+                this.form = {
+                    id: null,
+                    name: null,
+                    config: {
+                        leftValue: {
+                            value: undefined,
+                            valueName: null,
+                            valueType: null,
+                            type: null,
+                        },
+                        symbol: null,
+                        rightValue: {
+                            value: undefined,
+                            valueName: null,
+                            valueType: null,
+                            type: null,
+                        }
+                    },
+                    description: null,
+                };
+                this.dialogFormVisible = true;
+            },
+            isRightTypeSelectView(valueType) {
+                if (this.form.config.leftValue.valueType === null) {
+                    return false;
+                }
+                if (this.form.config.leftValue.valueType === valueType) {
+                    return true;
+                }
+                // 如果左值为集合时
+                if (this.form.config.leftValue.valueType === 'COLLECTION') {
+                    if (this.form.config.symbol === null) {
+                        return true;
+                    }
+                    // 并且 只有左值为CONTAIN/NOT_CONTAIN 返回所有的类型
+                    return this.form.config.symbol === 'CONTAIN' || this.form.config.symbol === 'NOT_CONTAIN';
+                }
+            },
+            leftValueChange() {
+                //左面发生改变，右边也改变
+                this.form.config.symbol = '';
+                this.form.config.rightValue.value = undefined;
+                this.form.config.rightValue.valueName = '';
+                this.form.config.rightValue.type = '';
+                this.rightSelect.options = [];
+            },
+            leftValueTypeChange() {
+                this.form.config.leftValue.value = undefined;
+                this.form.config.leftValue.valueName = '';
+                // 如果是变量或者元素
+                if (this.form.config.leftValue.type === 1 || this.form.config.leftValue.type === 0) {
+                    this.form.config.leftValue.valueType = null;
+                }
+                this.leftSelect.options = [];
+                this.form.config.symbol = '';
+                //左面发生改变，右边也改变
+                this.form.config.rightValue.value = undefined;
+                this.form.config.rightValue.valueName = '';
+                this.form.config.rightValue.type = '';
+                this.rightSelect.options = [];
+            },
+            rightValueTypeChange() {
+                this.form.config.rightValue.value = undefined;
+                this.form.config.rightValue.valueName = '';
+                this.rightSelect.options = [];
+            },
+            saveOrUpdate(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$axios.post(this.form.id === null ? "/ruleEngine/condition/add" : "/ruleEngine/condition/update", {
+                            "id": this.form.id,
+                            "name": this.form.name,
+                            "description": this.form.description,
+                            "config": {
+                                "leftValue": {
+                                    "value": this.form.config.leftValue.value,
+                                    "valueType": this.getValueType(this.form.config.leftValue.type, this.form.config.leftValue.valueType),
+                                    "type": this.form.config.leftValue.type >= 5 ? 2 : this.form.config.leftValue.type,
+                                },
+                                "symbol": this.form.config.symbol,
+                                "rightValue": {
+                                    "value": this.form.config.rightValue.value,
+                                    "valueType": this.getValueType(this.form.config.rightValue.type, this.form.config.rightValue.valueType),
+                                    "type": this.form.config.rightValue.type >= 5 ? 2 : this.form.config.rightValue.type,
+                                }
+                            }
+                        }).then(res => {
+                            if (res) {
+                                this.list();
+                            }
+                            this.$refs[formName].resetFields();
+                            this.dialogFormVisible = false;
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            rightSelectClick(item) {
+                this.form.config.rightValue.valueType = item.valueType;
+                this.form.config.rightValue.value = item.id;
+            },
+            leftSelectClick(item) {
+                this.form.config.leftValue.valueType = item.valueType;
+                this.form.config.leftValue.value = item.id;
+            },
+            reset(formName) {
+                this.$refs[formName].resetFields();
                 this.list();
-              }
-              this.$refs[formName].resetFields();
-              this.dialogFormVisible = false;
-            }).catch(function (error) {
-              console.log(error);
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      rightSelectClick(item) {
-        this.form.config.rightValue.valueType = item.valueType;
-        this.form.config.rightValue.value = item.id;
-      },
-      leftSelectClick(item) {
-        this.form.config.leftValue.valueType = item.valueType;
-        this.form.config.leftValue.value = item.id;
-      },
-      reset(formName) {
-        this.$refs[formName].resetFields();
-        this.list();
-      }, handleSizeChange(val) {
-        this.page.pageSize = val;
-        this.list();
-      },
-      handleCurrentChange(val) {
-        this.page.pageIndex = val;
-        this.list();
-      },
-      list() {
-        this.$axios.post("/ruleEngine/condition/list", {
-          "page": {
-            "pageSize": this.page.pageSize,
-            "pageIndex": this.page.pageIndex
-          },
-          "query": this.search.form,
-          "orders": [
-            {
-              "columnName": "id",
-              "desc": true
-            }
-          ]
-        }).then(res => {
-          if (res.data != null) {
-            this.tableData = res.data.rows;
+            }, handleSizeChange(val) {
+                this.page.pageSize = val;
+                this.list();
+            },
+            handleCurrentChange(val) {
+                this.page.pageIndex = val;
+                this.list();
+            },
+            list() {
+                this.$axios.post("/ruleEngine/condition/list", {
+                    "page": {
+                        "pageSize": this.page.pageSize,
+                        "pageIndex": this.page.pageIndex
+                    },
+                    "query": this.search.form,
+                    "orders": [
+                        {
+                            "columnName": "id",
+                            "desc": true
+                        }
+                    ]
+                }).then(res => {
+                    if (res.data != null) {
+                        this.tableData = res.data.rows;
 
-            this.page.total = res.data.page.total;
-          } else {
-              this.tableData = [];
-          }
-          this.loading = false;
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      leftRemoteMethod(query) {
-        if (query !== '') {
-          this.leftSelect.loading = true;
-          this.leftSelect.options = [];
-          let type = this.form.config.leftValue.type;
-          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
-            "page": {
-              "pageSize": 10,
-              "pageIndex": 1
+                        this.page.total = res.data.page.total;
+                    } else {
+                        this.tableData = [];
+                    }
+                    this.loading = false;
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
-            "query": {
-              "name": query,
+            leftRemoteMethod(query) {
+                if (query !== '') {
+                    this.leftSelect.loading = true;
+                    this.leftSelect.options = [];
+                    let type = this.form.config.leftValue.type;
+                    this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query,
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.leftSelect.options = res.data.rows;
+                        }
+                        this.leftSelect.loading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.leftSelect.options = [];
+                }
             },
-            "orders": []
-          }).then(res => {
-            if (res.data != null) {
-              this.leftSelect.options = res.data.rows;
-            }
-            this.leftSelect.loading = false;
-          }).catch(function (error) {
-            console.log(error);
-          });
-        } else {
-          this.leftSelect.options = [];
-        }
-      },
-      rightRemoteMethod(query) {
-        if (query !== '') {
-          this.rightSelect.loading = true;
-          this.rightSelect.options = [];
-          let type = this.form.config.rightValue.type;
-          this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
-            "page": {
-              "pageSize": 10,
-              "pageIndex": 1
+            rightRemoteMethod(query) {
+                if (query !== '') {
+                    this.rightSelect.loading = true;
+                    this.rightSelect.options = [];
+                    let type = this.form.config.rightValue.type;
+                    this.$axios.post(type === 1 ? "/ruleEngine/variable/list" : "/ruleEngine/element/list", {
+                        "page": {
+                            "pageSize": 10,
+                            "pageIndex": 1
+                        },
+                        "query": {
+                            "name": query,
+                            "valueType": this.form.config.leftValue.valueType === 'COLLECTION' ? null : this.form.config.leftValue.valueType
+                        },
+                        "orders": []
+                    }).then(res => {
+                        if (res.data != null) {
+                            this.rightSelect.options = res.data.rows;
+                        }
+                        this.rightSelect.loading = false;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    this.rightSelect.options = [];
+                }
             },
-            "query": {
-              "name": query,
-              "valueType": this.form.config.leftValue.valueType === 'COLLECTION' ? null : this.form.config.leftValue.valueType
-            },
-            "orders": []
-          }).then(res => {
-            if (res.data != null) {
-              this.rightSelect.options = res.data.rows;
-            }
-            this.rightSelect.loading = false;
-          }).catch(function (error) {
-            console.log(error);
-          });
-        } else {
-          this.rightSelect.options = [];
-        }
-      },
-      edit(row) {
-        this.clearValidate();
-        this.$axios.post("/ruleEngine/condition/get", {
-          "id": row.id
-        }).then(res => {
-          let da = res.data;
-          if (da != null) {
-            this.form = da;
-            this.form.config.leftValue.type = this.getType(da.config.leftValue.type, da.config.leftValue.valueType);
-            this.form.config.rightValue.type = this.getType(da.config.rightValue.type, da.config.rightValue.valueType);
+            edit(row) {
+                this.clearValidate();
+                this.$axios.post("/ruleEngine/condition/get", {
+                    "id": row.id
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.form = da;
+                        this.form.config.leftValue.type = this.getType(da.config.leftValue.type, da.config.leftValue.valueType);
+                        this.form.config.rightValue.type = this.getType(da.config.rightValue.type, da.config.rightValue.valueType);
 
-            this.dialogFormVisible = true;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      deleteRow(row) {
-        this.$axios.post("/ruleEngine/condition/delete", {
-          "id": row.id
-        }).then(res => {
-          let da = res.data;
-          if (da) {
+                        this.dialogFormVisible = true;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            deleteRow(row) {
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post("/ruleEngine/condition/delete", {
+                        "id": row.id
+                    }).then(res => {
+                        let da = res.data;
+                        if (da) {
+                            this.list();
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            getValueType(type, valueType) {
+                if (type === 5) {
+                    return "STRING";
+                } else if (type === 6) {
+                    return "BOOLEAN";
+                } else if (type === 7) {
+                    return "NUMBER";
+                } else if (type === 8) {
+                    return "COLLECTION";
+                }
+                return valueType;
+            },
+            getType(type, valueType) {
+                if (type === 2) {
+                    if (valueType === "COLLECTION") {
+                        return 8;
+                    } else if (valueType === "STRING") {
+                        return 5;
+                    } else if (valueType === "BOOLEAN") {
+                        return 6;
+                    } else if (valueType === "NUMBER") {
+                        return 7;
+                    }
+                }
+                return type;
+            },
+        },
+        created() {
             this.list();
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      getValueType(type, valueType) {
-        if (type === 5) {
-          return "STRING";
-        } else if (type === 6) {
-          return "BOOLEAN";
-        } else if (type === 7) {
-          return "NUMBER";
-        } else if (type === 8) {
-          return "COLLECTION";
+            //增加对名称的监听事件
+            this.$watch('form.config.leftValue.valueType', (newVal, oldVal) => {
+                if (newVal == null) {
+                    return;
+                }
+                this.symbolSelect.options = [];
+                this.$axios.post("/ruleEngine/symbol/getByType", {
+                    "param": newVal
+                }).then(res => {
+                    if (res.data != null) {
+                        this.symbolSelect.options = res.data;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            });
         }
-        return valueType;
-      },
-      getType(type, valueType) {
-        if (type === 2) {
-          if (valueType === "COLLECTION") {
-            return 8;
-          } else if (valueType === "STRING") {
-            return 5;
-          } else if (valueType === "BOOLEAN") {
-            return 6;
-          } else if (valueType === "NUMBER") {
-            return 7;
-          }
-        }
-        return type;
-      },
-    },
-    created() {
-      this.list();
-      //增加对名称的监听事件
-      this.$watch('form.config.leftValue.valueType', (newVal, oldVal) => {
-        if (newVal == null) {
-          return;
-        }
-        this.symbolSelect.options = [];
-        this.$axios.post("/ruleEngine/symbol/getByType", {
-          "param": newVal
-        }).then(res => {
-          if (res.data != null) {
-            this.symbolSelect.options = res.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      });
     }
-  }
 </script>
 <style>
   .el-input-number .el-input__inner {

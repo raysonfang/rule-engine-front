@@ -84,10 +84,7 @@
           <el-col :span="1"> &nbsp;</el-col>
 
           <el-col :span="13" style="margin-top: 26px">
-            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;"
-                          :key="pv.code"
-                          :prop="'function.paramValues.' + index + '.value'"
-                          :rules="{  required: true, message: pv.name+'参数不能为空', trigger: 'blur' }">
+            <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;" :key="pv.code">
               <el-select v-if="pv.valueType==='BOOLEAN'" v-model="pv.value" placeholder="请选择数据 ">
                 <el-option label="true" value="true"/>
                 <el-option label="false" value="false"/>
