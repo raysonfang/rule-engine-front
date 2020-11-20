@@ -337,7 +337,7 @@
                             "enable": da.abnormalAlarm.enable,
                             "email": da.abnormalAlarm.email.join(',')
                         };
-                        this.request.param = da.ruleInterfaceDescription.parameters;
+                        this.request.param = da.parameters;
                     }
                     this.loading = false;
                 }).catch(function (error) {

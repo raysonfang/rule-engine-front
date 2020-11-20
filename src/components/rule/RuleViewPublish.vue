@@ -130,7 +130,7 @@
                 <el-input v-model="request.url" :readonly="true"/>
               </el-form-item>
               <el-form-item label="入参" style="margin-top: -8px;">
-                <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="request.paramJson"
+                <el-input type="textarea" autosize :autosize="{ maxRows: 10}" v-model="request.requestJson"
                           :readonly="true"/>
               </el-form-item>
             </el-form>
@@ -212,8 +212,8 @@
                 code: null,
                 description: null,
                 request: {
-                    url: null,
-                    paramJson: null,
+                    url: "http://ruleserver.cn/ruleEngine/execute",
+                    requestJson: null,
                     param: [{
                         name: null,
                         value: null,
@@ -328,9 +328,22 @@
                             "enable": da.abnormalAlarm.enable,
                             "email": da.abnormalAlarm.email.join(',')
                         };
-                        this.request.url = da.ruleInterfaceDescription.requestUrl;
-                        this.request.paramJson = JSON.stringify(da.ruleInterfaceDescription.parameters, null, 4);
-                        this.request.param = da.ruleInterfaceDescription.parameters;
+                        let param = "{";
+                        if (da.parameters != null && da.parameters.length !== 0) {
+                            let length = da.parameters.length - 1;
+                            da.parameters.forEach((f, i) => {
+                                param += '"' + f.code + '":"略"';
+                                if (length !== i) {
+                                    param += ",";
+                                }
+                            });
+                        }
+                        param += "}";
+                        this.request.requestJson = JSON.stringify({
+                            "ruleCode": da.code,
+                            "param": JSON.parse(param)
+                        }, null, 6);
+                        this.request.param = da.parameters;
                     }
                     this.loading = false;
                 }).catch(function (error) {

@@ -160,14 +160,13 @@
                   </el-form-item>
 
                   <el-form-item prop="value" class="el-col-17">
-                    <el-select v-if="action.type===3" v-model="action.value" prop="value"
-                               placeholder="请选择数据 ">
+
+                    <el-select v-if="action.type===3" v-model="action.value" placeholder="请选择数据 ">
                       <el-option label="true" value="true"/>
                       <el-option label="false" value="false"/>
                     </el-select>
 
-                    <el-select prop="value"
-                               v-else-if="action.type===0||action.type===1"
+                    <el-select v-else-if="action.type===0||action.type===1"
                                v-model="action.valueName"
                                filterable
                                remote
@@ -189,7 +188,7 @@
                                        :max="10000000000000" style="width: 100%"/>
                     </div>
 
-                    <el-input v-else v-model="action.value" prop="value"/>
+                    <el-input v-else v-model="action.value"/>
 
                   </el-form-item>
 
@@ -238,20 +237,19 @@
                   <el-form-item prop="value" class="el-col-17"
                                 :rules="defaultAction.enableDefaultAction===0?{required: true, message: '请输入结果值', trigger: 'blur'}:{}">
 
-                    <el-select v-if="defaultAction.type===3" v-model="defaultAction.value">
+                  <el-select v-if="defaultAction.type===3" v-model="defaultAction.value" placeholder="请选择数据 ">
                       <el-option label="true" value="true"/>
                       <el-option label="false" value="false"/>
                     </el-select>
 
-                    <el-select
-                      v-else-if="defaultAction.type===1||defaultAction.type===0"
-                      v-model="defaultAction.valueName"
-                      filterable
-                      remote
-                      reserve-keyword
-                      placeholder="请输入关键词"
-                      :remote-method="defaultActionRemoteMethod"
-                      :loading="defaultAction.loading">
+                    <el-select v-else-if="defaultAction.type===1||defaultAction.type===0"
+                               v-model="defaultAction.valueName"
+                               filterable
+                               remote
+                               reserve-keyword
+                               placeholder="请输入关键词"
+                               :remote-method="defaultActionRemoteMethod"
+                               :loading="defaultAction.loading">
                       <el-option
                         v-for="item in defaultAction.options"
                         :key="item.id"
@@ -396,11 +394,11 @@
             },
             actionSelectClick(item) {
                 this.action.valueType = item.valueType;
-                this.action.value = item.id;
+                this.action.value = item.id.toString();
             },
             defaultActionSelectClick(item) {
                 this.defaultAction.valueType = item.valueType;
-                this.defaultAction.value = item.id;
+                this.defaultAction.value = item.id.toString();
             },
             defaultActionRemoteMethod(query) {
                 if (query !== '') {
