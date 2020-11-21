@@ -1,10 +1,20 @@
 <template>
-    <div>待开发</div>
+  <div>
+
+  </div>
 </template>
 
 <script>
     export default {
-        name: "SystemSetting"
+        name: "SystemSetting",
+        data() {
+            return {
+
+            }
+        },
+        created() {
+
+        },
     }
 </script>
 

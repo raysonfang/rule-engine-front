@@ -19,6 +19,7 @@ import RuleViewPublish from '@/components/rule/RuleViewPublish.vue'
 import RuleDefinition from '@/components/rule/RuleDefinition.vue'
 
 import SystemSetting from '@/components/setting/SystemSetting.vue'
+import PersonalSettings from '@/components/setting/PersonalSettings.vue'
 
 import ScoreCard from '@/components/score/ScoreCard.vue'
 
@@ -97,6 +98,11 @@ export default new Router({
           path: '/systemSetting',
           name: 'SystemSetting',
           component: SystemSetting
+        },
+        {
+          path: '/personalSettings',
+          name: 'PersonalSettings',
+          component: PersonalSettings
         },
         {
           path: '/scoreCard',

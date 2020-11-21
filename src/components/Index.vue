@@ -40,45 +40,26 @@
             @open="handleOpen"
             @close="handleClose">
 
-            <el-menu-item index="/home">
-              <i class="el-icon-s-home"/>
-              <span>首页</span>
-            </el-menu-item>
+            <template v-for="(item,index) in menuList">
 
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-menu"/>
-                <span>基础组件</span>
-              </template>
-              <el-menu-item-group>
-                <el-menu-item index="/element">元素</el-menu-item>
-                <el-menu-item index="/variable">变量</el-menu-item>
-                <el-menu-item index="/function">函数</el-menu-item>
-                <el-menu-item index="/condition">条件</el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
+              <el-menu-item :index="item.menuPath" v-if="item.children.length===0">
+                <i :class="item.icon"/>
+                <span>{{item.name}}</span>
+              </el-menu-item>
 
-            <el-submenu index="2">
-              <template slot="title">
-                <i class="el-icon-s-marketing"/>
-                <span>功能</span>
-              </template>
-              <el-menu-item-group>
-                <el-menu-item index="/rule">规则</el-menu-item>
-                <el-menu-item index="/decisionTree">决策树</el-menu-item>
-                <el-menu-item index="/scoreCard">评分卡</el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
+              <el-submenu :index="index.toString()" v-else>
+                <template slot="title">
+                  <i :class="item.icon"/>
+                  <span>{{item.name}}</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item v-for="(item,index) in item.children" :index="item.menuPath" :key="index">{{item.name}}
+                  </el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
 
-            <el-submenu index="3">
-              <template slot="title">
-                <i class="el-icon-s-tools"/>
-                <span>设置</span>
-              </template>
-              <el-menu-item-group>
-                <el-menu-item index="/systemSetting">系统设置</el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
+            </template>
+
           </el-menu>
         </el-aside>
         <el-main style="min-width: 1200px">
@@ -95,7 +76,8 @@
         data() {
             return {
                 username: null,
-                avatar: this.$defaultAvatar
+                avatar: this.$defaultAvatar,
+                menuList: []
             }
         },
         created() {
@@ -103,7 +85,7 @@
                 let data = res.data;
                 if (data != null) {
                     this.username = data.username;
-                    //this.avatar = data.avatarUrl;
+                    this.avatar = data.avatar;
                     sessionStorage.setItem('user', JSON.stringify(data));
                 } else {
                     this.$message({
@@ -116,6 +98,24 @@
             }).catch(function (error) {
                 console.log(error);
             });
+
+            this.$axios
+                .post("/menu/menuTree")
+                .then(res => {
+                    let data = res.data;
+                    if (data != null) {
+                        this.menuList = data[0].children;
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: '没有任何访问权限',
+                            type: 'warning'
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         },
         methods: {
             rightHandleCommand(command) {
@@ -130,6 +130,7 @@
                         console.log(error);
                     });
                 } else if (command === "userInfo") {
+                    this.$router.push({path: '/personalSettings'});
                 }
             },
             handleOpen(key, keyPath) {
