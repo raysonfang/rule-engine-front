@@ -32,7 +32,7 @@
                 }
             });
             this.$axios.post("/workspace/list", {}).then(res => {
-                if (res.data != null) {
+                if (res.data != null && res.data.length !== 0) {
                     this.workspace.options = res.data;
                 }
             });

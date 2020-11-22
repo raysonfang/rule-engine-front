@@ -269,6 +269,7 @@
                 });
                 let requestJson = {
                     "ruleCode": this.code,
+                    "workspaceCode": this.workspaceCode,
                     "param": params
                 };
                 this.runPercentage = 40;
@@ -318,6 +319,7 @@
                         this.code = da.code;
                         this.name = da.name;
                         this.description = da.description;
+                        this.workspaceCode = da.workspaceCode;
                         // condition group
                         this.conditionGroup = da.conditionGroup;
                         // action
