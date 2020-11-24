@@ -58,8 +58,9 @@
         label="规则状态"
         width="180">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isPublish" @click="show(scope.row)" size="medium" effect="plain"
-                  style="cursor: pointer">
+          <!-- !scope.row.isPublish 防止消息队列延迟-->
+          <el-tag v-if="scope.row.isPublish||(!scope.row.isPublish&&scope.row.status===2)" @click="show(scope.row)"
+                  size="medium" effect="plain" style="cursor: pointer">
             （ 已发布 ）
           </el-tag>
           <el-tag v-if="scope.row.status===0" @click="edit(scope.row)" type="warning" size="medium" effect="plain"

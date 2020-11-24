@@ -330,21 +330,16 @@
                             "enable": da.abnormalAlarm.enable,
                             "email": da.abnormalAlarm.email.join(',')
                         };
-                        let param = "{";
+                        let param = {};
                         if (da.parameters != null && da.parameters.length !== 0) {
-                            let length = da.parameters.length - 1;
-                            da.parameters.forEach((f, i) => {
-                                param += '"' + f.code + '":"略"';
-                                if (length !== i) {
-                                    param += ",";
-                                }
+                            da.parameters.forEach((e) => {
+                                param[e.code] = '略';
                             });
                         }
-                        param += "}";
                         this.request.requestJson = JSON.stringify({
                             "ruleCode": da.code,
                             "workspaceCode": da.workspaceCode,
-                            "param": JSON.parse(param)
+                            "param": param
                         }, null, 6);
                         this.request.param = da.parameters;
                     }
