@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-container v-loading.fullscreen.lock="fullscreenLoading===0">
+    <el-container v-loading.fullscreen.lock="fullscreenLoading!==0">
       <el-header style="min-width: 1400px">
         <el-row>
           <el-col :span="2">
@@ -108,7 +108,6 @@
                     let data = res.data;
                     if (data != null) {
                         this.menuList = data[0].children;
-                        this.fullscreenLoading = false;
                     } else {
                         this.$message({
                             showClose: true,
