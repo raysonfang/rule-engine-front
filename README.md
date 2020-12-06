@@ -10,11 +10,16 @@
 
 #### 业务逻辑实现不再依赖于代码开发，可零代码实现复杂业务逻辑。
 
-
+后端代码地址：https://github.com/DingQianWen/rule-engine  
 项目展示地址：http://ruleengine.cn/   
 申请登录权限联系QQ：761945125，Email：761945125@qq.com
 
 ### 技术文档
 简单使用：https://blog.csdn.net/weixin_42756198/article/details/109680143  
+
+### 技术栈/版本介绍：
+- 所涉及的相关的技术有：
+    - Vue 
+    - Element-ui
 
 ### 如果觉得本项目对您有任何一点帮助，请点右上角 "Star" 支持一下， 并向您的基友、同事们宣传一下吧，谢谢！
