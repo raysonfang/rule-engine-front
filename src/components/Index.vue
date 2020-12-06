@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-container>
+    <el-container v-loading.fullscreen.lock="fullscreenLoading===0">
       <el-header style="min-width: 1400px">
         <el-row>
           <el-col :span="2">
@@ -75,12 +75,14 @@
         name: "Index",
         data() {
             return {
+                fullscreenLoading: 0,
                 username: null,
                 avatar: this.$defaultAvatar,
                 menuList: []
             }
         },
         created() {
+            this.fullscreenLoading++;
             this.$userApi.getUserInfo().then(res => {
                 let data = res.data;
                 if (data != null) {
@@ -95,16 +97,18 @@
                     });
                     this.$router.push({path: '/login'});
                 }
+                this.fullscreenLoading--;
             }).catch(function (error) {
                 console.log(error);
             });
-
+            this.fullscreenLoading++;
             this.$axios
                 .post("/menu/menuTree")
                 .then(res => {
                     let data = res.data;
                     if (data != null) {
                         this.menuList = data[0].children;
+                        this.fullscreenLoading = false;
                     } else {
                         this.$message({
                             showClose: true,
@@ -112,10 +116,10 @@
                             type: 'warning'
                         });
                     }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    this.fullscreenLoading--;
+                }).catch(function (error) {
+                console.log(error);
+            });
         },
         methods: {
             rightHandleCommand(command) {

@@ -49,11 +49,11 @@
       <el-form ref="runAddForm" :rules="run.rules" :model="run.form" label-width="80px">
 
         <el-form-item label="名称" prop="name">
-          <el-input v-model="run.form.name" :disabled="true"/>
+          <el-input v-model="run.form.name" :readonly="true"/>
         </el-form-item>
 
         <el-form-item label="返回类型">
-          <el-select :value="run.form.returnValueType" :disabled="true">
+          <el-select :value="run.form.returnValueType">
             <el-option label="布尔" value="BOOLEAN"/>
             <el-option label="集合" value="COLLECTION"/>
             <el-option label="字符串" value="STRING"/>
@@ -72,11 +72,11 @@
 
           <el-col :span="4" style="margin-top: 26px">
             <el-form-item v-for="(pv,index) in run.form.function.paramValues" style="margin-top: 18px;" :key="pv.code">
-              <el-select v-model="pv.valueType" :disabled="true">
-                <el-option label="字符串" :value="5" v-if="pv.valueType==='STRING'"/>
-                <el-option label="布尔" :value="6" v-else-if="pv.valueType==='BOOLEAN'"/>
-                <el-option label="数值" :value="7" v-else-if="pv.valueType==='NUMBER'"/>
-                <el-option label="集合" :value="8" v-else-if="pv.valueType==='COLLECTION'"/>
+              <el-select :value="pv.valueType" :disabled="true">
+                <el-option label="字符串" value="STRING"/>
+                <el-option label="布尔" value="BOOLEAN"/>
+                <el-option label="数值" value="NUMBER"/>
+                <el-option label="集合" value="COLLECTION"/>
               </el-select>
             </el-form-item>
           </el-col>

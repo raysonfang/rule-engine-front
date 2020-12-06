@@ -197,6 +197,7 @@
         label="操作"
         width="140">
         <template slot-scope="scope">
+          <el-button @click="test(scope.row)" type="text" size="small">测试</el-button>
           <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
           <el-button @click="deleteRow(scope.row)" type="text" size="small">删除</el-button>
         </template>
@@ -300,6 +301,9 @@
             }
         },
         methods: {
+            test(row) {
+                alert("没时间开发，暂不支持，敬请期待，欢迎加入开发！");
+            },
             clearValidate() {
                 let ref = this.$refs['addForm'];
                 if (ref != null) {
