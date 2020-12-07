@@ -464,7 +464,7 @@
             },
             selectCondition(item) {
                 this.conditionGroup.forEach((value, index) => {
-                    if (value.id === this.currentConditionGroupId) {
+                    if (this.getUniqueMark(value) === this.currentConditionGroupId) {
                         let newOrderNo = 1;
                         // 如果存在条件组与条件的关系
                         if (value.conditionGroupCondition != null) {
@@ -634,7 +634,7 @@
             addCondition(cg) {
                 // 选择，或者创建
                 this.condition.dialogFormVisible = true;
-                this.currentConditionGroupId = cg.id;
+                this.currentConditionGroupId = this.getUniqueMark(cg);
             },
             removeCondition(conditionGroupCondition, id) {
                 // 删除
