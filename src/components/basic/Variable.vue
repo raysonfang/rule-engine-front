@@ -273,7 +273,7 @@
                         },
                         "query": {
                             "name": query,
-                            "valueType": pv.valueType === 'COLLECTION' ? null : pv.valueType
+                            "valueType": pv.valueType
                         },
                         "orders": []
                     }).then(res => {
