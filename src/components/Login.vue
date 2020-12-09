@@ -51,6 +51,8 @@
             font: 14px/2em Microsoft Yahei,tahoma,HELVETICA;
             width: 100%;
             text-align:center;">Copyright © 2020 规则引擎(ruleengine.cn), All Rights Reserved.
+      <br>
+      <span style="font-size: 13px;">京ICP备2020034246号-1</span>
     </div>
   </div>
 </template>
