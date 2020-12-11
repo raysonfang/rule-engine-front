@@ -202,10 +202,13 @@
 </template>
 
 <script>
+    import Clipboard from 'clipboard';
+
     export default {
         name: "RuleViewPublish",
         data() {
             return {
+                clipboard: null,
                 loading: false,
                 id: null,
                 name: null,
@@ -276,22 +279,39 @@
                 this.request.param.forEach((e) => {
                     params[e.code] = e.value === undefined ? '' : e.value;
                 });
-                let requestJson = {
-                    "ruleCode": this.code,
-                    "workspaceCode": this.workspaceCode,
-                    "param": params
-                };
                 this.runPercentage = 40;
-                this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
-                    let da = res.data;
-                    if (da != null) {
-                        this.runData.value = da.value + "";
-                        this.runData.valueType = da.valueType;
-                        this.runPercentage = 100;
-                        setTimeout(() => {
-                            this.runEnd = true;
+                // 调用已经发布的规则 当然这里可以不这么处理
+                this.$axios.post("/workspace/accessKey", {
+                    "param": this.workspaceCode,
+                }).then(accessKeyRes => {
+                    this.runPercentage = 66;
+                    let accessKey = accessKeyRes.data;
+                    if (accessKey != null) {
+                        let requestJson = {
+                            "ruleCode": this.code,
+                            "workspaceCode": this.workspaceCode,
+                            "accessKeyId": accessKey.accessKeyId,
+                            "accessKeySecret": accessKey.accessKeySecret,
+                            "param": params
+                        };
+                        this.runPercentage = 76;
+                        this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
+                            let da = res.data;
+                            if (da != null) {
+                                this.runData.value = da.value + "";
+                                this.runData.valueType = da.valueType;
+                                this.runPercentage = 100;
+                                setTimeout(() => {
+                                    this.runEnd = true;
+                                    this.runPercentage = 10;
+                                }, 1000);
+                            } else {
+                                this.runPercentage = 10;
+                            }
+                        }).catch(error => {
                             this.runPercentage = 10;
-                        }, 1000);
+                            console.log(error);
+                        });
                     } else {
                         this.runPercentage = 10;
                     }
@@ -339,6 +359,8 @@
                         this.request.requestJson = JSON.stringify({
                             "ruleCode": da.code,
                             "workspaceCode": da.workspaceCode,
+                            "accessKeyId": '略',
+                            "accessKeySecret": '略',
                             "param": param
                         }, null, 6);
                         this.request.param = da.parameters;
@@ -347,12 +369,37 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
-        }, mounted() {
+            },
+        },
+        mounted() {
             let ruleId = this.$route.query.ruleId;
             this.getPublishRule(ruleId);
-        }
+
+            this.clipboard = new Clipboard('.el-icon-document-copy', {
+                // 点击copy按钮，直接通过text直接返回复印的内容
+                text: () => this.request.url + "\n" + this.request.requestJson
+            });
+
+            this.clipboard.on('success', (e) => {
+                this.$message({
+                    message: '复制成功',
+                    type: 'success'
+                });
+            });
+            this.clipboard.on('error', (e) => {
+                console.log(e);
+                this.$message({
+                    message: '该浏览器不支持此方式复制',
+                    type: 'success'
+                });
+            });
+        },
+        beforeDestroy() {
+            // 释放内存
+            this.clipboard.destroy();
+        },
     }
+
 </script>
 <style>
   .el-input-number .el-input__inner {

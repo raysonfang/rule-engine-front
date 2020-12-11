@@ -163,6 +163,85 @@
       </div>
     </el-dialog>
 
+
+    <el-dialog title="条件测试" :visible.sync="run.dialogFormVisible" width="700px">
+      <el-form ref="runConditionForm" :rules="run.rules" :model="run.condition" label-width="80px">
+
+        <el-form-item label="名称">
+          <el-input v-model="run.condition.name" :readonly="true"/>
+        </el-form-item>
+
+        <el-form-item label="配置信息">
+          <el-tag class="item" type="info" effect="plain" style="margin-top: 2px;">
+            <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+              {{getConditionNamePrefix(run.condition.config.leftValue.type)}}
+            </el-tag>
+            <span style="color: #606266">{{run.condition.config.leftValue.variableValue!=null?run.condition.config.leftValue.variableValue:run.condition.config.leftValue.valueName}}</span>
+
+            &nbsp;
+            <el-tag type="warning" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+              {{run.condition.config.symbol}}
+            </el-tag>
+
+            &nbsp;
+            <el-tag type="success" style="height: 22px;line-height: 22px;padding: 0 2px 0 2px;">
+              {{ getConditionNamePrefix(run.condition.config.rightValue.type)}}
+            </el-tag>
+            <span style="color: #606266"> {{run.condition.config.rightValue.variableValue!=null?run.condition.config.rightValue.variableValue:run.condition.config.rightValue.valueName}}</span>
+          </el-tag>
+        </el-form-item>
+
+        <el-form-item label="条件参数" v-if="run.condition.paramValues.length!==0">
+
+          <el-col :span="3" style="margin-top: 26px;">
+            <el-form-item v-for="pv in run.condition.paramValues" :key="pv.code"
+                          style="text-align: right;margin-right:10px;margin-top: 19px;overflow: hidden;white-space: nowrap;">
+              {{pv.name!==null?pv.name:pv.code}}
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in run.condition.paramValues" style="margin-top: 18px;" :key="pv.code">
+              <el-select :value="pv.valueType" :disabled="true">
+                <el-option label="字符串" value="STRING"/>
+                <el-option label="布尔" value="BOOLEAN"/>
+                <el-option label="数值" value="NUMBER"/>
+                <el-option label="集合" value="COLLECTION"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="1"> &nbsp;</el-col>
+
+          <el-col :span="13" style="margin-top: 26px">
+            <el-form-item v-for="(pv,index) in run.condition.paramValues" style="margin-top: 18px;" :key="pv.code">
+              <el-select v-if="pv.valueType==='BOOLEAN'" v-model="pv.value" placeholder="请选择数据 ">
+                <el-option label="true" value="true"/>
+                <el-option label="false" value="false"/>
+              </el-select>
+              <el-input-number v-else-if="pv.valueType==='NUMBER'" v-model="pv.value" :controls="false"
+                               :max="10000000000000" style="width: 100%"/>
+              <el-input v-else v-model="pv.value"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            &nbsp;
+          </el-col>
+        </el-form-item>
+        <br>
+        <el-form-item label="输出">
+          <el-input type="textarea" v-model="run.condition.output"/>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="run.dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="exe('runForm')">运行</el-button>
+      </div>
+
+    </el-dialog>
+
+
     <el-table
       v-loading="loading"
       :data="tableData"
@@ -227,6 +306,20 @@
                     pageIndex: 1,
                     pageSize: 10,
                     total: 0
+                },
+                run: {
+                    dialogFormVisible: false,
+                    condition: {
+                        id: null,
+                        name: null,
+                        config: {
+                            leftValue: {},
+                            rightValue: {},
+                            symbol: null
+                        },
+                        paramValues: [],
+                        output: null
+                    }
                 },
                 search: {
                     form: {
@@ -301,8 +394,49 @@
             }
         },
         methods: {
+            getConditionNamePrefix(type) {
+                if (type === 0) {
+                    return "元素";
+                }
+                if (type === 1) {
+                    return "变量";
+                }
+                if (type === 2) {
+                    return "固定值";
+                }
+            },
+            exe() {
+                this.$axios.post("/ruleEngine/condition/run", {
+                    "id": this.run.condition.id,
+                    "paramValues": this.run.condition.paramValues
+                }).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.run.condition.output = da.toString();
+                    } else {
+                        this.run.condition.output = null;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             test(row) {
-                alert("没时间开发，暂不支持，敬请期待，欢迎加入开发！");
+                this.run.condition.id = row.id;
+                this.run.condition.name = row.name;
+                this.run.condition.config = row.config;
+                this.run.condition.output = null;
+                this.$axios.post("/ruleEngine/condition/getParameter", {
+                    "id": row.id
+                }).then(res => {
+                    if (res.data != null && res.data.length !== 0) {
+                        this.run.condition.paramValues = res.data;
+                    } else {
+                        this.run.condition.paramValues = [];
+                    }
+                    this.run.dialogFormVisible = true;
+                }).catch(function (error) {
+                    console.log(error);
+                });
             },
             clearValidate() {
                 let ref = this.$refs['addForm'];
@@ -605,5 +739,10 @@
   }
 </style>
 <style scoped>
-
+  .item {
+    line-height: 36px;
+    height: 36px;
+    padding-left: 6px;
+    margin-bottom: 6px;
+  }
 </style>
