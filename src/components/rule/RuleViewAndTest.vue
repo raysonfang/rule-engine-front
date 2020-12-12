@@ -292,20 +292,31 @@
                 });
             },
             publish() {
-                this.$axios.post("/ruleEngine/rule/publish",
-                    {
-                        id: this.id
-                    }
-                ).then(res => {
-                    if (res.data) {
-                        this.$message({
-                            showClose: true,
-                            message: '发布成功',
-                            type: 'success'
-                        });
-                    }
-                }).catch(error => {
-                    console.log(error);
+                this.$confirm('此操作将会改变线上规则运行, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post("/ruleEngine/rule/publish",
+                        {
+                            id: this.id
+                        }
+                    ).then(res => {
+                        if (res.data) {
+                            this.$message({
+                                showClose: true,
+                                message: '发布成功',
+                                type: 'success'
+                            });
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消发布'
+                    });
                 });
             },
             getRuleView(id) {
