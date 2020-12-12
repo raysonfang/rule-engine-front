@@ -105,8 +105,12 @@
     export default {
         name: "Element",
         data() {
-            var patter = /^[a-zA-Z][a-zA-Z0-9_&#\-]*$/;
+            const patter = /^[a-zA-Z][a-zA-Z0-9_&#\-]*$/;
             const validateIsExists = (rule, value, callback) => {
+                // 更新操作跳过此校验
+                if (this.form.id !== undefined && this.form.id !== null) {
+                    return callback();
+                }
                 if (!patter.test(value)) {
                     return callback(new Error('字母开头，以及字母数字_&#-组成'));
                 }

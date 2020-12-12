@@ -268,6 +268,7 @@
                     params[e.code] = e.value === undefined ? '' : e.value;
                 });
                 let requestJson = {
+                    "id": this.id,
                     "ruleCode": this.code,
                     "workspaceCode": this.workspaceCode,
                     "param": params

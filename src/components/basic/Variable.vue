@@ -205,6 +205,10 @@
         name: "Variable",
         data() {
             const validateIsExists = (rule, value, callback) => {
+                // 更新操作跳过此校验
+                if (this.form.id !== undefined && this.form.id !== null) {
+                    return callback();
+                }
                 this.$axios.post("/ruleEngine/variable/nameIsExists",
                     {
                         "param": value
