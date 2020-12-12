@@ -299,6 +299,18 @@
     export default {
         name: "Condition",
         data() {
+            const validateIsExists = (rule, value, callback) => {
+                this.$axios.post("/ruleEngine/condition/nameIsExists",
+                    {
+                        "param": value
+                    }).then(res => {
+                    if (res.data) {
+                        callback(new Error('条件名称已经存在'));
+                    } else {
+                        callback();
+                    }
+                });
+            };
             return {
                 tableData: [],
                 loading: true,
@@ -350,7 +362,8 @@
                 rules: {
                     name: [
                         {required: true, message: '请输入条件名称', trigger: ['blur']},
-                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: ['blur']}
+                        {min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: ['blur']},
+                        {validator: validateIsExists, trigger: 'blur'}
                     ],
                     config: {
                         leftValue: {

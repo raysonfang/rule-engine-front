@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-container v-loading.fullscreen.lock="fullscreenLoading!==0">
+    <el-container v-loading.fullscreen.lock="fullscreenLoading">
       <el-header style="min-width: 1400px">
         <el-row>
           <el-col :span="2">
@@ -75,20 +75,22 @@
         name: "Index",
         data() {
             return {
-                fullscreenLoading: 0,
+                fullscreenLoading: false,
                 username: null,
                 avatar: this.$defaultAvatar,
                 menuList: []
             }
         },
         created() {
-            this.fullscreenLoading++;
+            this.fullscreenLoading = true;
             this.$userApi.getUserInfo().then(res => {
                 let data = res.data;
                 if (data != null) {
                     this.username = data.username;
                     this.avatar = data.avatar;
                     sessionStorage.setItem('user', JSON.stringify(data));
+                    this.loadMenuTree();
+                    this.fullscreenLoading = false;
                 } else {
                     this.$message({
                         showClose: true,
@@ -97,30 +99,28 @@
                     });
                     this.$router.push({path: '/login'});
                 }
-                this.fullscreenLoading--;
             }).catch(function (error) {
-                console.log(error);
-            });
-            this.fullscreenLoading++;
-            this.$axios
-                .post("/menu/menuTree")
-                .then(res => {
-                    let data = res.data;
-                    if (data != null) {
-                        this.menuList = data[0].children;
-                    } else {
-                        this.$message({
-                            showClose: true,
-                            message: '没有任何访问权限',
-                            type: 'warning'
-                        });
-                    }
-                    this.fullscreenLoading--;
-                }).catch(function (error) {
                 console.log(error);
             });
         },
         methods: {
+            loadMenuTree() {
+                this.$axios.post("/menu/menuTree")
+                    .then(res => {
+                        let data = res.data;
+                        if (data != null) {
+                            this.menuList = data[0].children;
+                        } else {
+                            this.$message({
+                                showClose: true,
+                                message: '没有任何访问权限',
+                                type: 'warning'
+                            });
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
+            },
             rightHandleCommand(command) {
                 if (command === 'logout') {
                     this.$userApi.logout().then(res => {

@@ -26,14 +26,14 @@
             }
         },
         created() {
-            this.$axios.post("/workspace/currentWorkspace", {}).then(res => {
-                if (res.data != null) {
-                    this.workspace.value = res.data.id;
-                }
-            });
             this.$axios.post("/workspace/list", {}).then(res => {
                 if (res.data != null && res.data.length !== 0) {
                     this.workspace.options = res.data;
+                }
+            });
+            this.$axios.post("/workspace/currentWorkspace", {}).then(res => {
+                if (res.data != null) {
+                    this.workspace.value = res.data.id;
                 }
             });
         },

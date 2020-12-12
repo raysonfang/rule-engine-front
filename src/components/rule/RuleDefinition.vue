@@ -50,6 +50,22 @@
     export default {
         name: "RuleDefinition",
         data() {
+            var patter = /^[a-zA-Z][a-zA-Z0-9_&#\-]*$/;
+            const validateIsExists = (rule, value, callback) => {
+                if (!patter.test(value)) {
+                    return callback(new Error('字母开头，以及字母数字_&#-组成'));
+                }
+                this.$axios.post("/ruleEngine/rule/codeIsExists",
+                    {
+                        "param": value
+                    }).then(res => {
+                    if (res.data) {
+                        callback(new Error('规则code已经存在'));
+                    } else {
+                        callback();
+                    }
+                });
+            };
             return {
                 loading: false,
                 form: {
@@ -61,11 +77,12 @@
                 rules: {
                     name: [
                         {required: true, message: '请输入规则名称', trigger: 'blur'},
-                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+                        {min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur'}
                     ],
                     code: [
                         {required: true, message: '请输入规则Code', trigger: 'blur'},
-                        {min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur'}
+                        {min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur'},
+                        {validator: validateIsExists, trigger: 'blur'}
                     ],
                 }
             }
