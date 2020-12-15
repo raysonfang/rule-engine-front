@@ -280,38 +280,24 @@
                     params[e.code] = e.value === undefined ? '' : e.value;
                 });
                 this.runPercentage = 40;
-                // 调用已经发布的规则 当然这里可以不这么处理
-                this.$axios.post("/workspace/accessKey", {
-                    "param": this.workspaceCode,
-                }).then(accessKeyRes => {
-                    this.runPercentage = 66;
-                    let accessKey = accessKeyRes.data;
-                    if (accessKey != null) {
-                        let requestJson = {
-                            "ruleCode": this.code,
-                            "workspaceCode": this.workspaceCode,
-                            "accessKeyId": accessKey.accessKeyId,
-                            "accessKeySecret": accessKey.accessKeySecret,
-                            "param": params
-                        };
-                        this.runPercentage = 76;
-                        this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
-                            let da = res.data;
-                            if (da != null) {
-                                this.runData.value = da.value + "";
-                                this.runData.valueType = da.valueType;
-                                this.runPercentage = 100;
-                                setTimeout(() => {
-                                    this.runEnd = true;
-                                    this.runPercentage = 10;
-                                }, 1000);
-                            } else {
-                                this.runPercentage = 10;
-                            }
-                        }).catch(error => {
+                let requestJson = {
+                    "ruleCode": this.code,
+                    "workspaceCode": this.workspaceCode,
+                    "accessKeyId": this.accessKeyId,
+                    "accessKeySecret": this.accessKeySecret,
+                    "param": params
+                };
+                this.runPercentage = 56;
+                this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
+                    let da = res.data;
+                    if (da != null) {
+                        this.runData.value = da.value + "";
+                        this.runData.valueType = da.valueType;
+                        this.runPercentage = 100;
+                        setTimeout(() => {
+                            this.runEnd = true;
                             this.runPercentage = 10;
-                            console.log(error);
-                        });
+                        }, 1000);
                     } else {
                         this.runPercentage = 10;
                     }
@@ -330,6 +316,9 @@
                         this.id = da.id;
                         this.code = da.code;
                         this.name = da.name;
+                        // ...
+                        this.accessKeyId = da.accessKeyId;
+                        this.accessKeySecret = da.accessKeySecret;
                         this.workspaceCode = da.workspaceCode;
                         this.description = da.description;
                         // condition group
