@@ -202,192 +202,188 @@
 </template>
 
 <script>
-    import Clipboard from 'clipboard';
+  import Clipboard from 'clipboard';
 
-    export default {
-        name: "RuleViewPublish",
-        data() {
-            return {
-                clipboard: null,
-                loading: false,
-                id: null,
-                name: null,
-                code: null,
-                description: null,
-                request: {
-                    url: "http://ruleserver.cn/ruleEngine/execute",
-                    requestJson: null,
-                    param: [{
-                        name: null,
-                        value: null,
-                        code: null,
-                        valueType: null,
-                    }],
-                    example: null
-                },
-                runPercentage: 10,
-                conditionGroup: [],
-                action: {
-                    value: null,
-                    valueName: null,
-                    variableValue: null,
-                    valueType: null,
-                    type: null,
-                    loading: false,
-                    options: []
-                },
-                runData: {
-                    value: null,
-                    valueType: null,
-                },
-                runEnd: false,
-                defaultAction: {
-                    enableDefaultAction: 1,
-                    value: null,
-                    valueName: null,
-                    variableValue: null,
-                    valueType: null,
-                    type: null,
-                    loading: false,
-                    options: [],
-                },
-                abnormalAlarm: {
-                    enable: false,
-                    email: ''
-                }
+  export default {
+    name: "RuleViewPublish",
+    data() {
+      return {
+        clipboard: null,
+        loading: false,
+        id: null,
+        name: null,
+        code: null,
+        description: null,
+        request: {
+          url: "http://ruleserver.cn/ruleEngine/execute",
+          requestJson: null,
+          param: [{
+            name: null,
+            value: null,
+            code: null,
+            valueType: null,
+          }],
+          example: null
+        },
+        runPercentage: 10,
+        conditionGroup: [],
+        action: {
+          value: null,
+          valueName: null,
+          variableValue: null,
+          valueType: null,
+          type: null,
+          loading: false,
+          options: []
+        },
+        runData: {
+          value: null,
+          valueType: null,
+        },
+        runEnd: false,
+        defaultAction: {
+          enableDefaultAction: 1,
+          value: null,
+          valueName: null,
+          variableValue: null,
+          valueType: null,
+          type: null,
+          loading: false,
+          options: [],
+        },
+        abnormalAlarm: {
+          enable: false,
+          email: ''
+        }
+      }
+    }, methods: {
+      runGoBack() {
+        this.runPercentage = 10;
+        this.runEnd = false;
+      },
+      getConditionNamePrefix(type) {
+        if (type === 0) {
+          return "元素";
+        }
+        if (type === 1) {
+          return "变量";
+        }
+        if (type === 2) {
+          return "固定值";
+        }
+      },
+      run() {
+        this.runEnd = false;
+        this.runPercentage = 20;
+        const params = {};
+        this.request.param.forEach((e) => {
+          params[e.code] = e.value === undefined ? '' : e.value;
+        });
+        this.runPercentage = 40;
+        let requestJson = {
+          "id": this.id,
+          "ruleCode": this.code,
+          "workspaceCode": this.workspaceCode,
+          "param": params
+        };
+        this.runPercentage = 56;
+        this.$axios.post("/ruleEngine/ruleTest/run", requestJson).then(res => {
+          let da = res.data;
+          if (da != null) {
+            this.runData.value = da.value + "";
+            this.runData.valueType = da.valueType;
+            this.runPercentage = 100;
+            setTimeout(() => {
+              this.runEnd = true;
+              this.runPercentage = 10;
+            }, 1000);
+          } else {
+            this.runPercentage = 10;
+          }
+        }).catch(error => {
+          this.runPercentage = 10;
+          console.log(error);
+        });
+      },
+      getPublishRule(id) {
+        this.loading = true;
+        this.$axios.post("/ruleEngine/rule/getPublishRule", {
+          "id": id
+        }).then(res => {
+          let da = res.data;
+          if (da != null) {
+            this.id = da.id;
+            this.code = da.code;
+            this.name = da.name;
+            this.workspaceCode = da.workspaceCode;
+            this.description = da.description;
+            // condition group
+            this.conditionGroup = da.conditionGroup;
+            // action
+            this.action.value = da.action.value;
+            this.action.valueName = da.action.valueName;
+            this.action.variableValue = da.action.variableValue;
+
+            // default action
+            if (da.defaultAction !== null) {
+              this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
+              this.defaultAction.value = da.defaultAction.value;
+              this.defaultAction.valueName = da.defaultAction.valueName;
+              this.defaultAction.variableValue = da.defaultAction.variableValue;
             }
-        }, methods: {
-            runGoBack() {
-                this.runPercentage = 10;
-                this.runEnd = false;
-            },
-            getConditionNamePrefix(type) {
-                if (type === 0) {
-                    return "元素";
-                }
-                if (type === 1) {
-                    return "变量";
-                }
-                if (type === 2) {
-                    return "固定值";
-                }
-            },
-            run() {
-                this.runEnd = false;
-                this.runPercentage = 20;
-                const params = {};
-                this.request.param.forEach((e) => {
-                    params[e.code] = e.value === undefined ? '' : e.value;
-                });
-                this.runPercentage = 40;
-                let requestJson = {
-                    "ruleCode": this.code,
-                    "workspaceCode": this.workspaceCode,
-                    "accessKeyId": this.accessKeyId,
-                    "accessKeySecret": this.accessKeySecret,
-                    "param": params
-                };
-                this.runPercentage = 56;
-                this.$axios.post("/ruleEngine/execute", requestJson).then(res => {
-                    let da = res.data;
-                    if (da != null) {
-                        this.runData.value = da.value + "";
-                        this.runData.valueType = da.valueType;
-                        this.runPercentage = 100;
-                        setTimeout(() => {
-                            this.runEnd = true;
-                            this.runPercentage = 10;
-                        }, 1000);
-                    } else {
-                        this.runPercentage = 10;
-                    }
-                }).catch(error => {
-                    this.runPercentage = 10;
-                    console.log(error);
-                });
-            },
-            getPublishRule(id) {
-                this.loading = true;
-                this.$axios.post("/ruleEngine/rule/getPublishRule", {
-                    "id": id
-                }).then(res => {
-                    let da = res.data;
-                    if (da != null) {
-                        this.id = da.id;
-                        this.code = da.code;
-                        this.name = da.name;
-                        // ...
-                        this.accessKeyId = da.accessKeyId;
-                        this.accessKeySecret = da.accessKeySecret;
-                        this.workspaceCode = da.workspaceCode;
-                        this.description = da.description;
-                        // condition group
-                        this.conditionGroup = da.conditionGroup;
-                        // action
-                        this.action.value = da.action.value;
-                        this.action.valueName = da.action.valueName;
-                        this.action.variableValue = da.action.variableValue;
+            this.abnormalAlarm = {
+              "enable": da.abnormalAlarm.enable,
+              "email": da.abnormalAlarm.email.join(',')
+            };
+            let param = {};
+            if (da.parameters != null && da.parameters.length !== 0) {
+              da.parameters.forEach((e) => {
+                param[e.code] = '略';
+              });
+            }
+            this.request.requestJson = JSON.stringify({
+              "ruleCode": da.code,
+              "workspaceCode": da.workspaceCode,
+              "accessKeyId": '略',
+              "accessKeySecret": '略',
+              "param": param
+            }, null, 6);
+            this.request.param = da.parameters;
+          }
+          this.loading = false;
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+    },
+    mounted() {
+      let ruleId = this.$route.query.ruleId;
+      this.getPublishRule(ruleId);
 
-                        // default action
-                        if (da.defaultAction !== null) {
-                            this.defaultAction.enableDefaultAction = da.defaultAction.enableDefaultAction;
-                            this.defaultAction.value = da.defaultAction.value;
-                            this.defaultAction.valueName = da.defaultAction.valueName;
-                            this.defaultAction.variableValue = da.defaultAction.variableValue;
-                        }
-                        this.abnormalAlarm = {
-                            "enable": da.abnormalAlarm.enable,
-                            "email": da.abnormalAlarm.email.join(',')
-                        };
-                        let param = {};
-                        if (da.parameters != null && da.parameters.length !== 0) {
-                            da.parameters.forEach((e) => {
-                                param[e.code] = '略';
-                            });
-                        }
-                        this.request.requestJson = JSON.stringify({
-                            "ruleCode": da.code,
-                            "workspaceCode": da.workspaceCode,
-                            "accessKeyId": '略',
-                            "accessKeySecret": '略',
-                            "param": param
-                        }, null, 6);
-                        this.request.param = da.parameters;
-                    }
-                    this.loading = false;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-        },
-        mounted() {
-            let ruleId = this.$route.query.ruleId;
-            this.getPublishRule(ruleId);
+      this.clipboard = new Clipboard('.el-icon-document-copy', {
+        // 点击copy按钮，直接通过text直接返回复印的内容
+        text: () => this.request.url + "\n" + this.request.requestJson
+      });
 
-            this.clipboard = new Clipboard('.el-icon-document-copy', {
-                // 点击copy按钮，直接通过text直接返回复印的内容
-                text: () => this.request.url + "\n" + this.request.requestJson
-            });
-
-            this.clipboard.on('success', (e) => {
-                this.$message({
-                    message: '复制成功',
-                    type: 'success'
-                });
-            });
-            this.clipboard.on('error', (e) => {
-                console.log(e);
-                this.$message({
-                    message: '该浏览器不支持此方式复制',
-                    type: 'success'
-                });
-            });
-        },
-        beforeDestroy() {
-            // 释放内存
-            this.clipboard.destroy();
-        },
-    }
+      this.clipboard.on('success', (e) => {
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        });
+      });
+      this.clipboard.on('error', (e) => {
+        console.log(e);
+        this.$message({
+          message: '该浏览器不支持此方式复制',
+          type: 'success'
+        });
+      });
+    },
+    beforeDestroy() {
+      // 释放内存
+      this.clipboard.destroy();
+    },
+  }
 
 </script>
 <style>
