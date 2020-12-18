@@ -153,7 +153,7 @@
                         {min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur'},
                     ],
                     code: [
-                        {required: true, message: '请输入元素Code', trigger: 'blur'},
+                        {required: true, message: '请输入元素编码', trigger: 'blur'},
                         {min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur'},
                         {validator: validateIsExists, trigger: 'blur'}
                     ],
