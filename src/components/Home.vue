@@ -15,46 +15,64 @@
 </template>
 
 <script>
-    export default {
-        name: "home",
-        data() {
-            return {
-                workspace: {
-                    options: [],
-                    value: null
-                }
-            }
+  export default {
+    name: "home",
+    data() {
+      return {
+        workspace: {
+          options: [],
+          value: null
         },
-        created() {
-            this.$axios.post("/workspace/list", {}).then(res => {
-                if (res.data != null && res.data.length !== 0) {
-                    this.workspace.options = res.data;
-                }
-            });
-            this.$axios.post("/workspace/currentWorkspace", {}).then(res => {
-                if (res.data != null) {
-                    this.workspace.value = res.data.id;
-                }
-            });
+        workspaceSearch: {
+          form: {
+            name: null,
+            code: null,
+          }
         },
-        methods: {
-            changeWorkspace() {
-                this.$axios.post("/workspace/change", {
-                    "id": this.workspace.value
-                }).then(res => {
-                    if (res.data != null) {
-                        this.$message({
-                            showClose: true,
-                            message: '切换成功',
-                            type: 'success'
-                        });
-                    }
-                });
-            }
+      }
+    },
+    created() {
+      this.$axios.post("/workspace/list", {
+        "page": {
+          "pageIndex": 1,
+          "pageSize": 10,
         },
-        mounted() {
+        "query": this.workspaceSearch.form,
+        "orders": [
+          {
+            "columnName": "id",
+            "desc": true
+          }
+        ]
+      }).then(res => {
+        if (res.data != null && res.data.length !== 0) {
+          this.workspace.options = res.data.rows;
         }
+      });
+      this.$axios.post("/workspace/currentWorkspace", {}).then(res => {
+        if (res.data != null) {
+          this.workspace.value = res.data.id;
+        }
+      });
+    },
+    methods: {
+      changeWorkspace() {
+        this.$axios.post("/workspace/change", {
+          "id": this.workspace.value
+        }).then(res => {
+          if (res.data != null) {
+            this.$message({
+              showClose: true,
+              message: '切换成功',
+              type: 'success'
+            });
+          }
+        });
+      }
+    },
+    mounted() {
     }
+  }
 </script>
 
 <style scoped>

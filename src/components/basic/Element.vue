@@ -65,7 +65,6 @@
       <el-table-column
         prop="code"
         label="编码"
-        sortable
         width="200">
       </el-table-column>
       <el-table-column

@@ -25,6 +25,9 @@ import ScoreCard from '@/components/score/ScoreCard.vue'
 
 import DecisionTree from '@/components/decision/tree/DecisionTree'
 
+
+import Workspace from '@/components/authority/Workspace'
+
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -113,6 +116,11 @@ export default new Router({
           path: '/decisionTree',
           name: 'DecisionTree',
           component: DecisionTree
+        },
+        {
+          path: '/workspace',
+          name: 'Workspace',
+          component: Workspace
         },
       ]
     },
