@@ -22,7 +22,7 @@
               <el-form-item label="名称" prop="name">
                 <el-input v-model="form.name"/>
               </el-form-item>
-              <el-form-item label="Code" prop="code">
+              <el-form-item label="编码" prop="code">
                 <el-input v-model="form.code" :disabled="form.id!==undefined"/>
               </el-form-item>
               <el-form-item label="说明" prop="description">

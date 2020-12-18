@@ -44,7 +44,7 @@
 
       <el-table-column
         prop="code"
-        label="Code"
+        label="编码"
         width="230">
       </el-table-column>
 

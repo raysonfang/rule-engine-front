@@ -5,7 +5,7 @@
       <el-form-item label="名称" prop="name">
         <el-input v-model="search.form.name"/>
       </el-form-item>
-      <el-form-item label="Code" prop="code">
+      <el-form-item label="编码" prop="code">
         <el-input v-model="search.form.code"/>
       </el-form-item>
       <el-form-item>
@@ -22,7 +22,7 @@
           <el-input v-model="form.name"/>
         </el-form-item>
 
-        <el-form-item label="Code" prop="code">
+        <el-form-item label="编码" prop="code">
           <el-input v-model="form.code" :disabled="form.id!==null"/>
         </el-form-item>
 
@@ -64,7 +64,7 @@
       </el-table-column>
       <el-table-column
         prop="code"
-        label="Code"
+        label="编码"
         sortable
         width="200">
       </el-table-column>
