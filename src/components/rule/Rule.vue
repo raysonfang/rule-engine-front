@@ -4,7 +4,7 @@
       <el-form-item label="规则名称" prop="name">
         <el-input v-model="search.form.name"/>
       </el-form-item>
-      <el-form-item label="规则Code" prop="code">
+      <el-form-item label="规则编码" prop="code">
         <el-input v-model="search.form.code"/>
       </el-form-item>
       <el-form-item label="规则状态">

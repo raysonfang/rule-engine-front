@@ -24,7 +24,7 @@ import PersonalSettings from '@/components/setting/PersonalSettings.vue'
 import ScoreCard from '@/components/score/ScoreCard.vue'
 
 import DecisionTree from '@/components/decision/tree/DecisionTree'
-
+import DecisionTable from '@/components/decision/table/DecisionTable'
 
 import Workspace from '@/components/authority/Workspace'
 
@@ -116,6 +116,11 @@ export default new Router({
           path: '/decisionTree',
           name: 'DecisionTree',
           component: DecisionTree
+        },
+        {
+          path: '/decisionTable',
+          name: 'DecisionTable',
+          component: DecisionTable
         },
         {
           path: '/workspace',
